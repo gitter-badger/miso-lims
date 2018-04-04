@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static uk.ac.bbsrc.tgac.miso.core.data.workflow.Workflow.WorkflowName.LOAD_SEQUENCER;
+import static uk.ac.bbsrc.tgac.miso.core.data.workflow.Workflow.WorkflowName.TEST_WORKFLOW;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,8 +32,7 @@ public class TestWorkflowTest {
   private static final String POOL_ALIAS = "pool_alias";
   private static final String POOL_NAME = "pool_name";
 
-  // Use null for WorkflowName since we can't create an Enum value for a test workflow
-  private static final WorkflowName WORKFLOW_NAME = null;
+  private static final WorkflowName WORKFLOW_NAME = TEST_WORKFLOW;
 
   private Workflow workflow;
 

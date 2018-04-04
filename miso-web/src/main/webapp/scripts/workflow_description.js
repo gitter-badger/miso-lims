@@ -1,8 +1,7 @@
 WorkflowDescription = (function() {
   return {
-    initDescription: function(id, message, inputTypes) {
+    initDescription: function(id, message) {
       jQuery("#" + id).append("<p>" + message + "</p>").append("<input type='text'>");
-      console.log(inputTypes)
     }
   }
 })();

@@ -1,5 +1,7 @@
 package uk.ac.bbsrc.tgac.miso.core.data.workflow.impl;
 
+import static uk.ac.bbsrc.tgac.miso.core.data.workflow.Workflow.WorkflowName.TEST_WORKFLOW;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,8 +23,7 @@ import uk.ac.bbsrc.tgac.miso.core.data.workflow.WorkflowStepPrompt;
  * remain valid.
  */
 public class TestWorkflow extends AbstractWorkflow {
-  // Use null for WorkflowName since we can't create an Enum value for a test workflow
-  private static final WorkflowName WORKFLOW_NAME = null;
+  private static final WorkflowName WORKFLOW_NAME = TEST_WORKFLOW;
 
   private IntegerWorkflowStep step0 = new IntegerWorkflowStep("Input a concentration as an integer.");
   private PoolWorkflowStep step1 = new PoolWorkflowStep("Scan a Pool to modify its concentration.");

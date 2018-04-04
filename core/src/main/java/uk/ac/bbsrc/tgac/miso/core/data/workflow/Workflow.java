@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import uk.ac.bbsrc.tgac.miso.core.data.workflow.impl.LoadSequencerWorkflow;
+import uk.ac.bbsrc.tgac.miso.core.data.workflow.impl.TestWorkflow;
 
 public interface Workflow {
   Progress getProgress();
@@ -59,6 +60,11 @@ public interface Workflow {
       @Override
       public Workflow createWorkflow() {
         return new LoadSequencerWorkflow();
+      }
+    }, TEST_WORKFLOW {
+      @Override
+      protected Workflow createWorkflow() {
+        return new TestWorkflow();
       }
     };
 

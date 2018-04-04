@@ -1,6 +1,7 @@
 package uk.ac.bbsrc.tgac.miso.webapp.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,7 +28,6 @@ public class WorkflowController {
 
     WorkflowStepPrompt prompt = workflow.getNextStep();
     model.put("message", prompt.getMessage());
-    model.put("inputTypes", prompt.getDataTypes());
 
     return new ModelAndView("/pages/workflow.jsp", model);
   }

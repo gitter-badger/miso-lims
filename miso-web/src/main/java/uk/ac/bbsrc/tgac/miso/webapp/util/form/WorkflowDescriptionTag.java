@@ -16,7 +16,7 @@
 
 package uk.ac.bbsrc.tgac.miso.webapp.util.form;
 
-import java.util.Set;
+import java.util.List;
 
 import org.springframework.web.servlet.tags.RequestContextAwareTag;
 
@@ -24,7 +24,7 @@ import uk.ac.bbsrc.tgac.miso.core.data.workflow.ProgressStep.InputType;
 
 public class WorkflowDescriptionTag extends RequestContextAwareTag {
   private String message;
-  private Set<InputType> inputTypes;
+  private List<InputType> inputTypes;
 
   @Override
   protected int doStartTagInternal() throws Exception {
@@ -45,13 +45,5 @@ public class WorkflowDescriptionTag extends RequestContextAwareTag {
 
   public void setMessage(String message) {
     this.message = message;
-  }
-
-  public Set<InputType> getInputTypes() {
-    return inputTypes;
-  }
-
-  public void setInputTypes(Set<InputType> inputTypes) {
-    this.inputTypes = inputTypes;
   }
 }

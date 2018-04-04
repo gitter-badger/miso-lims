@@ -29,7 +29,7 @@
       ${title}
     </h1>
 
-    <miso:workflow-description id="workflowDescription" message="${message}" inputTypes="${inputTypes}"/>
+    <miso:workflow-description id="workflowDescription" message="${message}"/>
   </div>
 </div>
 
