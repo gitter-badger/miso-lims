@@ -26,8 +26,14 @@
 <div id="maincontent">
   <div id="contentcolumn">
     <h1>
-        Workflow Title
+      ${title}
     </h1>
+
+    <p>
+        ${message}
+    </p>
+
+    <input type="text">
   </div>
 </div>
 

@@ -9,6 +9,8 @@ import org.springframework.web.servlet.ModelAndView;
 public class WorkflowController {
   @RequestMapping("/workflow")
   public ModelAndView editWorkflow(ModelMap model) {
+    model.put("title", "Workflow title");
+    model.put("message", "This is the user message describing what and how to input data into the input form.");
     return new ModelAndView("/pages/workflow.jsp", model);
   }
 }
