@@ -86,6 +86,11 @@ public class TestWorkflow extends AbstractWorkflow {
     workflowExecutor.save(pool);
   }
 
+  @Override
+  public String getName() {
+    return "Test Workflow";
+  }
+
   private int currentStepNumber() {
     return nextStepNumber - 1;
   }

@@ -57,4 +57,9 @@ public class LoadSequencerWorkflow extends AbstractWorkflow {
   public void execute(WorkflowExecutor workflowExecutor) throws IOException {
     throw new UnsupportedOperationException("Not implemented yet");
   }
+
+  @Override
+  public String getName() {
+    return "Load Sequencer Workflow";
+  }
 }

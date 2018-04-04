@@ -16,12 +16,42 @@
 
 package uk.ac.bbsrc.tgac.miso.webapp.util.form;
 
+import java.util.Set;
+
 import org.springframework.web.servlet.tags.RequestContextAwareTag;
 
+import uk.ac.bbsrc.tgac.miso.core.data.workflow.ProgressStep.InputType;
+
 public class WorkflowDescriptionTag extends RequestContextAwareTag {
+  private String message;
+  private Set<InputType> inputTypes;
+
   @Override
   protected int doStartTagInternal() throws Exception {
-    pageContext.getOut().append(String.format("<div id='%1$s'></div>", getId()));
+    pageContext.getOut().append(String.format(
+        "<div id='%1$s'></div>"
+            + "<script type='text/javascript'>"
+            + "jQuery(document).ready(function () {"
+            + "WorkflowDescription.initDescription('%1$s', '%2$s', '%3$s');"
+            + "});"
+            + "</script>",
+        getId(), message, inputTypes));
     return SKIP_BODY;
+  }
+
+  public String getMessage() {
+    return message;
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
+  }
+
+  public Set<InputType> getInputTypes() {
+    return inputTypes;
+  }
+
+  public void setInputTypes(Set<InputType> inputTypes) {
+    this.inputTypes = inputTypes;
   }
 }

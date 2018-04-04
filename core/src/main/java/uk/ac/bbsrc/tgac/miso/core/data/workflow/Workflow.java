@@ -47,6 +47,11 @@ public interface Workflow {
   void execute(WorkflowExecutor workflowExecutor) throws IOException;
 
   /**
+   * @return proper name of workflow, for display purposes
+   */
+  String getName();
+
+  /**
    * Represents a type of Workflow.  Should have a one-to-one correspondence with every implementation of Workflow
    */
   enum WorkflowName {
