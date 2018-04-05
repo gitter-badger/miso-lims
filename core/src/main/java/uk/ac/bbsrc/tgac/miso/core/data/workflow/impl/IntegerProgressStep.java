@@ -1,11 +1,18 @@
 package uk.ac.bbsrc.tgac.miso.core.data.workflow.impl;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 import uk.ac.bbsrc.tgac.miso.core.data.workflow.AbstractProgressStep;
 import uk.ac.bbsrc.tgac.miso.core.data.workflow.WorkflowStep;
 
+@Entity
+@Table(name = "StepInteger")
 public class IntegerProgressStep extends AbstractProgressStep {
   private static final long serialVersionUID = 1L;
 
+  @Column(name = "int", nullable = false)
   private int input;
 
   public int getInput() {
