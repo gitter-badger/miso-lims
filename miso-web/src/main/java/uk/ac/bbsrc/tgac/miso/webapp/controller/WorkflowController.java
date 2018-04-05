@@ -26,6 +26,7 @@ public class WorkflowController {
 
     model.put("title", workflow.getName());
 
+    model.put("workflowId", workflow.getProgress().getId());
     WorkflowStepPrompt prompt = workflow.getNextStep();
     model.put("message", prompt.getMessage());
 
