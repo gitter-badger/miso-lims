@@ -17,22 +17,37 @@ WorfklowState = (function() {
     })
   };
 
-  var makeInput = function(stateDiv, workflowId) {
-    var input = jQuery("<input/>").attr({type: "text"});
+  var makeMessageTag = function(message) {
+    return jQuery("<p>" + message + "</p>");
+  };
+
+  var makeInputTag = function() {
+    return jQuery("<input/>").attr({type: "text"});
+  };
+
+  var registerEnterHandler = function(input, workflowId, onSuccess) {
     input.keypress(function(e) {
       if (e.which === 13) {
-        processInput(input.val(), workflowId, function(prompt) {
-          stateDiv.empty().append("<p>" + prompt["message"] + "</p>").append(makeInput(stateDiv));
-        });
+        processInput(input.val(), workflowId, onSuccess);
       }
+    })
+  };
+
+  var updateState = function(state, message, workflowId) {
+    var messageTag = makeMessageTag(message);
+
+    var inputTag = makeInputTag(state, workflowId);
+    registerEnterHandler(inputTag, workflowId, function(prompt) {
+      updateState(state, prompt["message"], workflowId);
     });
-    return input;
+
+    state.empty().append(messageTag).append(inputTag);
+    inputTag.focus();
   };
 
   return {
     init: function(divId, workflowId, message) {
-      var stateDiv = jQuery("#" + divId);
-      stateDiv.append("<p>" + message + "</p>").append(makeInput(stateDiv, workflowId));
+      updateState(jQuery("#" + divId), message, workflowId);
     }
   }
 })();
