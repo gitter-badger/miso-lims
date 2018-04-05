@@ -1,4 +1,4 @@
-WorkflowDescription = (function() {
+WorfklowState = (function() {
   var processInput = function(input) {
     var url = "/miso/rest/workflow/process";
     var queryUrl = encodeURI(url + "/?" + jQuery.param({input: input}));
@@ -19,7 +19,7 @@ WorkflowDescription = (function() {
   };
 
   return {
-    initDescription: function(id, message) {
+    init: function(id, message) {
       var input = jQuery("<input/>").attr({type: "text"});
       jQuery("#" + id).append("<p>" + message + "</p>").append(input);
       input.keypress(function(e) {
