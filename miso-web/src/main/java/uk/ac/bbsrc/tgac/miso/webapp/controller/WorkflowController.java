@@ -33,9 +33,10 @@ public class WorkflowController {
   }
 
   @RequestMapping("/edit/{id}")
-  public ModelAndView editWorkflow(@PathVariable long id, ModelMap model) {
-    model.put("title", "Workflow title");
-    model.put("message", "This is the user message describing what and how to input data into the input form.");
+  public ModelAndView editWorkflow(@PathVariable long id, ModelMap model) throws IOException {
+    Workflow workflow = workflowManager.loadWorkflow(id);
+    model.put("title", workflow.getName());
+    model.put("message", workflow.getNextStep().getMessage());
     return new ModelAndView("/pages/workflow.jsp", model);
   }
 }
