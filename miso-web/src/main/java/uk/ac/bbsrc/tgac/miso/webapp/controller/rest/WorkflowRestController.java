@@ -23,6 +23,10 @@ public class WorkflowRestController extends RestController {
   public @ResponseBody WorkflowStepPrompt process(@RequestParam("input") String input, @RequestParam("id") long id) throws IOException {
     Workflow workflow = workflowManager.loadWorkflow(id);
     workflowManager.processInput(workflow, input);
+    if (workflow.isComplete()) {
+      workflowManager.execute(workflow);
+      // todo: return completion
+    }
     return workflow.getNextStep();
   }
 }
