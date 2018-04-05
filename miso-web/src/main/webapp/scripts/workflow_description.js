@@ -26,7 +26,7 @@ WorkflowDescription = (function() {
         if (e.which === 13) {
           processInput(input.val());
         }
-      })
+      });
     }
   }
 })();

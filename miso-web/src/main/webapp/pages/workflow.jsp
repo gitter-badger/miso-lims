@@ -29,7 +29,12 @@
       ${title}
     </h1>
 
-    <miso:workflow-description id="workflowDescription" message="${message}"/>
+    <div id='workflowState'></div>
+    <script type='text/javascript'>
+      jQuery(document).ready(function() {
+        WorkflowDescription.initDescription("workflowState", "${message}");
+      });
+    </script>
   </div>
 </div>
 

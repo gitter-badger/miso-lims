@@ -384,25 +384,6 @@
 		<dynamic-attributes>false</dynamic-attributes>
 	</tag>
 
-	<tag>
-		<description>Renders a description of the user's place in a Workflow</description>
-		<name>workflow-description</name>
-		<tag-class>uk.ac.bbsrc.tgac.miso.webapp.util.form.WorkflowDescriptionTag</tag-class>
-		<body-content>JSP</body-content>
-		<attribute>
-			<description>Id of the div containing the description</description>
-			<name>id</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<description>Message to display to the user</description>
-			<name>message</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-	</tag>
-
     <function>
         <name>instanceOf</name>
         <function-class>uk.ac.bbsrc.tgac.miso.webapp.util.form.TagUtils</function-class>
