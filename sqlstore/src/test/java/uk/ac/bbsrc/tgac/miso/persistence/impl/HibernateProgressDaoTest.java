@@ -83,23 +83,23 @@ public class HibernateProgressDaoTest extends AbstractDAOTest {
 
   @Test
   public void saveWithoutSteps() {
-    Progress actual = dao.save(createProgressWithoutSteps());
+    long id = dao.save(createProgressWithoutSteps()).getId();
 
-    assertEquivalent(createProgressWithoutSteps(), dao.get(actual.getId()));
+    assertEquivalent(createProgressWithoutSteps(), dao.get(id));
   }
 
   @Test
   public void saveNew() {
-    Progress actual = dao.save(createProgressWithOrderedSteps());
+    long id = dao.save(createProgressWithOrderedSteps()).getId();
 
-    assertEquivalent(createProgressWithOrderedSteps(), dao.get(actual.getId()));
+    assertEquivalent(createProgressWithOrderedSteps(), dao.get(id));
   }
 
   @Test
   public void saveNewWithUnorderedSteps() {
-    Progress actual = dao.save(createProgressWithUnorderedSteps());
+    long id = dao.save(createProgressWithUnorderedSteps()).getId();
 
-    assertEquivalent(createProgressWithOrderedSteps(), dao.get(actual.getId()));
+    assertEquivalent(createProgressWithOrderedSteps(), dao.get(id));
   }
 
   @Test
@@ -111,6 +111,7 @@ public class HibernateProgressDaoTest extends AbstractDAOTest {
     progress1.getSteps().add(step);
 
     dao.save(actual);
+    sessionFactory.getCurrentSession().evict(actual);
 
     assertEquivalent(progress1, dao.get(WORKFLOW_PROGRESS_ID_1));
   }
@@ -119,16 +120,17 @@ public class HibernateProgressDaoTest extends AbstractDAOTest {
   public void saveAddMultipleSteps() {
     Progress actual = dao.get(WORKFLOW_PROGRESS_ID_2);
     List<ProgressStep> newSteps = Arrays.asList(
-        makePoolProgressStep(0),
-        makeSampleProgressStep(1),
-        makeSampleProgressStep(2),
+        makePoolProgressStep(2),
         makeSampleProgressStep(3),
-        makePoolProgressStep(4));
+        makeSampleProgressStep(4),
+        makeSampleProgressStep(5),
+        makePoolProgressStep(6));
 
     actual.getSteps().addAll(newSteps);
     progress2.getSteps().addAll(newSteps);
 
     dao.save(actual);
+    sessionFactory.getCurrentSession().evict(actual);
 
     assertEquivalent(progress2, dao.get(WORKFLOW_PROGRESS_ID_2));
   }
