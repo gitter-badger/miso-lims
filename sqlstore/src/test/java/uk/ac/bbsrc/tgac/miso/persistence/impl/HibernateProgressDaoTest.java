@@ -105,7 +105,7 @@ public class HibernateProgressDaoTest extends AbstractDAOTest {
   @Test
   public void saveAddStep() {
     Progress actual = dao.get(WORKFLOW_PROGRESS_ID_1);
-    ProgressStep step = makePoolProgressStep(2);
+    ProgressStep step = makePoolProgressStep(1);
 
     actual.getSteps().add(step);
     progress1.getSteps().add(step);
@@ -119,11 +119,11 @@ public class HibernateProgressDaoTest extends AbstractDAOTest {
   public void saveAddMultipleSteps() {
     Progress actual = dao.get(WORKFLOW_PROGRESS_ID_2);
     List<ProgressStep> newSteps = Arrays.asList(
-        makePoolProgressStep(1),
+        makePoolProgressStep(0),
+        makeSampleProgressStep(1),
         makeSampleProgressStep(2),
         makeSampleProgressStep(3),
-        makeSampleProgressStep(4),
-        makePoolProgressStep(5));
+        makePoolProgressStep(4));
 
     actual.getSteps().addAll(newSteps);
     progress2.getSteps().addAll(newSteps);
@@ -157,7 +157,7 @@ public class HibernateProgressDaoTest extends AbstractDAOTest {
 
   private Progress createProgress1() {
     Progress progress = makeProgress(LOAD_SEQUENCER, getDefaultUser(), new Date(), new Date(),
-        Collections.singletonList(makeSampleProgressStep(1)));
+        Collections.singletonList(makeSampleProgressStep(0)));
     progress.setId(WORKFLOW_PROGRESS_ID_1);
 
     return progress;
@@ -165,7 +165,7 @@ public class HibernateProgressDaoTest extends AbstractDAOTest {
 
   private Progress createProgress2() {
     Progress progress = makeProgress(LOAD_SEQUENCER, getDefaultUser(), new Date(), new Date(),
-        Arrays.asList(makeSampleProgressStep(1), makePoolProgressStep(2)));
+        Arrays.asList(makeSampleProgressStep(0), makePoolProgressStep(1)));
     progress.setId(WORKFLOW_PROGRESS_ID_2);
 
     return progress;
@@ -177,12 +177,12 @@ public class HibernateProgressDaoTest extends AbstractDAOTest {
 
   private Progress createProgressWithOrderedSteps() {
     return makeProgress(LOAD_SEQUENCER, getDefaultUser(), new Date(0), new Date(1),
-        Arrays.asList(makeSampleProgressStep(1), makePoolProgressStep(2)));
+        Arrays.asList(makeSampleProgressStep(0), makePoolProgressStep(1)));
   }
 
   private Progress createProgressWithUnorderedSteps() {
     return makeProgress(LOAD_SEQUENCER, getDefaultUser(), new Date(0), new Date(1),
-        Arrays.asList(makePoolProgressStep(2), makeSampleProgressStep(1)));
+        Arrays.asList(makePoolProgressStep(1), makeSampleProgressStep(0)));
   }
 
   /**
