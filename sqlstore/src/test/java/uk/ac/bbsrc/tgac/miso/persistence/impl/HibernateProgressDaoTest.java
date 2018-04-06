@@ -59,22 +59,22 @@ public class HibernateProgressDaoTest extends AbstractDAOTest {
   }
 
   @Test
-  public void getByUnknownId() {
+  public void testGetByUnknownId() {
     assertNull(dao.get(UNKNOWN_WORKFLOW_PROGRESS_ID));
   }
 
   @Test
-  public void getByKnownId() {
+  public void testGetByKnownId() {
     assertEquivalent(progress1, dao.get(WORKFLOW_PROGRESS_ID_1));
   }
 
   @Test
-  public void listByUnknownUser() {
+  public void testListByUnknownUser() {
     assertEquals(Collections.emptyList(), dao.listByUserId(UNKNOWN_USER_ID));
   }
 
   @Test
-  public void listByKnownUser() {
+  public void testListByKnownUser() {
     List<Progress> progresses = dao.listByUserId(USER_ID);
 
     assertEquivalent(progress1, progresses.get(0));
@@ -82,28 +82,28 @@ public class HibernateProgressDaoTest extends AbstractDAOTest {
   }
 
   @Test
-  public void saveWithoutSteps() {
+  public void testSaveWithoutSteps() {
     long id = dao.save(createProgressWithoutSteps()).getId();
 
     assertEquivalent(createProgressWithoutSteps(), dao.get(id));
   }
 
   @Test
-  public void saveNew() {
+  public void testSaveNew() {
     long id = dao.save(createProgressWithOrderedSteps()).getId();
 
     assertEquivalent(createProgressWithOrderedSteps(), dao.get(id));
   }
 
   @Test
-  public void saveNewWithUnorderedSteps() {
+  public void testSaveNewWithUnorderedSteps() {
     long id = dao.save(createProgressWithUnorderedSteps()).getId();
 
     assertEquivalent(createProgressWithOrderedSteps(), dao.get(id));
   }
 
   @Test
-  public void saveAddStep() {
+  public void testSaveAddStep() {
     Progress actual = dao.get(WORKFLOW_PROGRESS_ID_1);
     ProgressStep step = makePoolProgressStep(1);
 
@@ -117,7 +117,7 @@ public class HibernateProgressDaoTest extends AbstractDAOTest {
   }
 
   @Test
-  public void saveAddMultipleSteps() {
+  public void testSaveAddMultipleSteps() {
     Progress actual = dao.get(WORKFLOW_PROGRESS_ID_2);
     List<ProgressStep> newSteps = Arrays.asList(
         makePoolProgressStep(2),
