@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import uk.ac.bbsrc.tgac.miso.core.data.workflow.Progress;
+import uk.ac.bbsrc.tgac.miso.core.data.workflow.ProgressStep;
 import uk.ac.bbsrc.tgac.miso.core.data.workflow.impl.ProgressImpl;
 import uk.ac.bbsrc.tgac.miso.core.store.ProgressStore;
 
@@ -43,7 +44,15 @@ public class HibernateProgressDao implements ProgressStore {
 
   @Override
   public Progress save(Progress progress) {
-    currentSession().saveOrUpdate(progress);
+    if (progress.getId() == Progress.UNSAVED_ID) {
+      currentSession().save(progress);
+    } else {
+      currentSession().update(progress);
+    }
+
+    for (ProgressStep step : progress.getSteps()) {
+      // todo
+    }
 
     return progress;
   }
