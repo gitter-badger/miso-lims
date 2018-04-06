@@ -55,7 +55,7 @@ public class ProgressImpl implements Progress {
   @Column(name = "lastModified", nullable = false)
   private Date lastModified;
 
-  @OneToMany(targetEntity = AbstractProgressStep.class, mappedBy = "id.progress")
+  @OneToMany(targetEntity = AbstractProgressStep.class, mappedBy = "id.progress", orphanRemoval = true)
   @Sort(type = SortType.NATURAL)
   private SortedSet<ProgressStep> steps;
 
