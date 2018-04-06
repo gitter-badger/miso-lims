@@ -37,7 +37,7 @@ public class ProgressImpl implements Progress {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  private long workflowProgressId;
+  private long workflowProgressId = Progress.UNSAVED_ID;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "workflowName")

@@ -15,6 +15,8 @@ import uk.ac.bbsrc.tgac.miso.core.data.Identifiable;
  * Models an in-progress workflow
  */
 public interface Progress extends Identifiable, Serializable {
+  long UNSAVED_ID = 0L;
+
   void setId(long id);
 
   WorkflowName getWorkflowName();
