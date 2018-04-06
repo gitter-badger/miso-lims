@@ -43,7 +43,7 @@ public class HibernateProgressDao implements ProgressStore {
 
   @Override
   public Progress save(Progress progress) {
-    currentSession().save(progress);
+    currentSession().saveOrUpdate(progress);
 
     return progress;
   }
