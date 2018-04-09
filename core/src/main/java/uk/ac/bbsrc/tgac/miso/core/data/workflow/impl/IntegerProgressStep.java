@@ -12,7 +12,6 @@ import uk.ac.bbsrc.tgac.miso.core.data.workflow.WorkflowStep;
 public class IntegerProgressStep extends AbstractProgressStep {
   private static final long serialVersionUID = 1L;
 
-  @Column(name = "int", nullable = false)
   private int input;
 
   public int getInput() {
