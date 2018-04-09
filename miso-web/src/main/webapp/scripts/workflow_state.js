@@ -38,7 +38,11 @@ WorfklowState = (function() {
 
     var inputTag = makeInputTag(state, workflowId);
     registerEnterHandler(inputTag, workflowId, function(prompt) {
-      updateState(state, prompt["message"], workflowId);
+      if (prompt == null) {
+        alert("Complete");
+      } else {
+        updateState(state, prompt["message"], workflowId);
+      }
     });
 
     state.empty().append(messageTag).append(inputTag);

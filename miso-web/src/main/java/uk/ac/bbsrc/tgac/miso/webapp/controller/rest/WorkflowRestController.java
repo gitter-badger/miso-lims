@@ -25,7 +25,7 @@ public class WorkflowRestController extends RestController {
     workflowManager.processInput(workflow, input);
     if (workflow.isComplete()) {
       workflowManager.execute(workflow);
-      // todo: return completion
+      return null;
     }
     return workflow.getNextStep();
   }
