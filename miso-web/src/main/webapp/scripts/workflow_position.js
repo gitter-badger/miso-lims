@@ -25,9 +25,10 @@ WorkflowPosition = (function() {
     return jQuery("<input/>").attr({type: "text"});
   };
 
-  var registerEnterHandler = function(input, workflowId, onSuccess) {
+  var registerEnterHandler = function(input, workflowId, onLoad, onSuccess) {
     input.keypress(function(e) {
       if (e.which === 13) {
+        onLoad();
         processInput(input.val(), workflowId, onSuccess);
       }
     })
@@ -35,13 +36,17 @@ WorkflowPosition = (function() {
 
   var updatePosition = function(position, message, workflowId) {
     var messageTag = makeMessageTag(message);
-
     var inputTag = makeInputTag(position, workflowId);
-    registerEnterHandler(inputTag, workflowId, function(prompt) {
-      if (prompt == null) {
-        position.empty().append(jQuery("<p>Workflow is complete!</p>"));
-      } else {
-        updatePosition(position, prompt["message"], workflowId);
+
+    registerEnterHandler(inputTag, workflowId,
+      function() {
+        position.empty().append(jQuery("<img>").attr("src", "/styles/images/ajax-loader.gif"));
+      },
+      function(prompt) {
+        if (prompt == null) {
+          position.empty().append(jQuery("<p>Workflow is complete!</p>"));
+        } else {
+          updatePosition(position, prompt["message"], workflowId);
       }
     });
 
