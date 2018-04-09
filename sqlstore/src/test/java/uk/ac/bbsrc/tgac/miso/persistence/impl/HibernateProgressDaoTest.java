@@ -13,6 +13,7 @@ import java.util.SortedSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.Test;
@@ -93,23 +94,30 @@ public class HibernateProgressDaoTest extends AbstractDAOTest {
 
   @Test
   public void testSaveWithoutSteps() {
-    long id = dao.save(createProgressWithoutSteps()).getId();
+    assertEquivalent(createProgressWithoutSteps(), dao.get(save(createProgressWithoutSteps())));
+  }
 
-    assertEquivalent(createProgressWithoutSteps(), dao.get(id));
+  /**
+   * Save Progress, flush changes, and remove progress from current session
+   *
+   * @return id of saved Progress
+   */
+  public long save(Progress progress) {
+    long id = dao.save(progress).getId();
+    Session session = sessionFactory.getCurrentSession();
+    session.flush();
+    session.evict(progress);
+    return id;
   }
 
   @Test
   public void testSaveNew() {
-    long id = dao.save(createProgressWithOrderedSteps()).getId();
-
-    assertEquivalent(createProgressWithOrderedSteps(), dao.get(id));
+    assertEquivalent(createProgressWithOrderedSteps(), dao.get(save(createProgressWithOrderedSteps())));
   }
 
   @Test
   public void testSaveNewWithUnorderedSteps() {
-    long id = dao.save(createProgressWithUnorderedSteps()).getId();
-
-    assertEquivalent(createProgressWithOrderedSteps(), dao.get(id));
+    assertEquivalent(createProgressWithOrderedSteps(), dao.get(save(createProgressWithUnorderedSteps())));
   }
 
   @Test
@@ -121,11 +129,7 @@ public class HibernateProgressDaoTest extends AbstractDAOTest {
     actual.getSteps().add(step);
     progress1.getSteps().add(step);
 
-    dao.save(actual);
-    sessionFactory.getCurrentSession().flush();
-    sessionFactory.getCurrentSession().evict(actual);
-
-    assertEquivalent(progress1, dao.get(WORKFLOW_PROGRESS_ID_1));
+    assertEquivalent(progress1, dao.get(save(actual)));
   }
 
   private SampleProgressStep makeSampleProgressStep(long sampleId, int stepNumber) {
@@ -163,16 +167,16 @@ public class HibernateProgressDaoTest extends AbstractDAOTest {
   }
 
   private Progress createProgressWithoutSteps() {
-    return makeProgress(LOAD_SEQUENCER, getDefaultUser(), new Date(0), new Date(1), Collections.emptyList());
+    return makeProgress(LOAD_SEQUENCER, getDefaultUser(), new Date(), new Date(), Collections.emptyList());
   }
 
   private Progress createProgressWithOrderedSteps() {
-    return makeProgress(LOAD_SEQUENCER, getDefaultUser(), new Date(0), new Date(1),
+    return makeProgress(LOAD_SEQUENCER, getDefaultUser(), new Date(), new Date(),
         Arrays.asList(makeSampleProgressStep(SAMPLE_ID, 0), makePoolProgressStep(POOL_ID, 1)));
   }
 
   private Progress createProgressWithUnorderedSteps() {
-    return makeProgress(LOAD_SEQUENCER, getDefaultUser(), new Date(0), new Date(1),
+    return makeProgress(LOAD_SEQUENCER, getDefaultUser(), new Date(), new Date(),
         Arrays.asList(makePoolProgressStep(POOL_ID, 1), makeSampleProgressStep(SAMPLE_ID, 0)));
   }
 
@@ -203,6 +207,7 @@ public class HibernateProgressDaoTest extends AbstractDAOTest {
     assertEquals(expectedProgress.getUser(), actualProgress.getUser());
     assertSimilarDates(expectedProgress.getCreationTime(), actualProgress.getCreationTime());
     assertSimilarDates(expectedProgress.getLastModified(), actualProgress.getLastModified());
+    assertTrue(actualProgress.getCreationTime().getTime() <= actualProgress.getLastModified().getTime());
 
     // The Progress of each ProgressStep is not matched, as the Progress's ID is automatically generated
     //  and comparing the fields of each ProgressStep's parent would cause infinite recursion
