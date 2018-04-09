@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -55,7 +56,7 @@ public class ProgressImpl implements Progress {
   @Column(name = "lastModified", nullable = false)
   private Date lastModified;
 
-  @OneToMany(targetEntity = AbstractProgressStep.class, mappedBy = "id.progress", orphanRemoval = true)
+  @OneToMany(targetEntity = AbstractProgressStep.class, mappedBy = "id.progress", cascade = CascadeType.REMOVE, orphanRemoval = true)
   @Sort(type = SortType.NATURAL)
   private SortedSet<ProgressStep> steps;
 
