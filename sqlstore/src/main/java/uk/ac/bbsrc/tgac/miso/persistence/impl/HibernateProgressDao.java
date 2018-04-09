@@ -50,8 +50,14 @@ public class HibernateProgressDao implements ProgressStore {
       currentSession().update(progress);
     }
 
-    for (ProgressStep step : progress.getSteps()) {
-      // todo
+    if (progress.getSteps() != null) {
+      for (ProgressStep step : progress.getSteps()) {
+        if (currentSession().contains(step)) {
+          currentSession().update(step);
+        } else {
+          currentSession().save(step);
+        }
+      }
     }
 
     return progress;

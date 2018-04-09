@@ -122,6 +122,7 @@ public class HibernateProgressDaoTest extends AbstractDAOTest {
     progress1.getSteps().add(step);
 
     dao.save(actual);
+    sessionFactory.getCurrentSession().flush();
     sessionFactory.getCurrentSession().evict(actual);
 
     assertEquivalent(progress1, dao.get(WORKFLOW_PROGRESS_ID_1));
