@@ -1,4 +1,4 @@
-WorkflowView = (function() {
+WorkflowPosition = (function() {
   var processInput = function(input, workflowId, onSuccess) {
     var url = "/miso/rest/workflow/process";
     var queryUrl = encodeURI(url + "/?" + jQuery.param({input: input, id: workflowId}));
@@ -33,25 +33,25 @@ WorkflowView = (function() {
     })
   };
 
-  var updateView = function(view, message, workflowId) {
+  var updatePosition = function(position, message, workflowId) {
     var messageTag = makeMessageTag(message);
 
-    var inputTag = makeInputTag(view, workflowId);
+    var inputTag = makeInputTag(position, workflowId);
     registerEnterHandler(inputTag, workflowId, function(prompt) {
       if (prompt == null) {
-        view.empty().append(jQuery("<p>Workflow is complete!</p>"));
+        position.empty().append(jQuery("<p>Workflow is complete!</p>"));
       } else {
-        updateView(view, prompt["message"], workflowId);
+        updatePosition(position, prompt["message"], workflowId);
       }
     });
 
-    view.empty().append(messageTag).append(inputTag);
+    position.empty().append(messageTag).append(inputTag);
     inputTag.focus();
   };
 
   return {
     init: function(divId, workflowId, message) {
-      updateView(jQuery("#" + divId), message, workflowId);
+      updatePosition(jQuery("#" + divId), message, workflowId);
     }
   }
 })();
