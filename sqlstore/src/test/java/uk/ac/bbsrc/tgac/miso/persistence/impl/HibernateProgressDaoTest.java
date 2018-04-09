@@ -24,6 +24,10 @@ import com.eaglegenomics.simlims.core.User;
 import com.google.common.collect.Streams;
 
 import uk.ac.bbsrc.tgac.miso.AbstractDAOTest;
+import uk.ac.bbsrc.tgac.miso.core.data.Pool;
+import uk.ac.bbsrc.tgac.miso.core.data.Sample;
+import uk.ac.bbsrc.tgac.miso.core.data.impl.PoolImpl;
+import uk.ac.bbsrc.tgac.miso.core.data.impl.SampleImpl;
 import uk.ac.bbsrc.tgac.miso.core.data.impl.UserImpl;
 import uk.ac.bbsrc.tgac.miso.core.data.workflow.Progress;
 import uk.ac.bbsrc.tgac.miso.core.data.workflow.ProgressStep;
@@ -39,6 +43,12 @@ public class HibernateProgressDaoTest extends AbstractDAOTest {
 
   private static final long UNKNOWN_USER_ID = 42;
   private static final long USER_ID = 3;
+
+  private static final long PROGRESS1_SAMPLE_ID = 1;
+  private static final long PROGRESS2_SAMPLE_ID = 2;
+  private static final long PROGRESS2_POOL_ID = 1;
+  private static final long SAMPLE_ID = 3;
+  private static final long POOL_ID = 2;
 
   // Progress objects that mirror most of the attributes of the objects in the test database
   private Progress progress1;
@@ -105,7 +115,8 @@ public class HibernateProgressDaoTest extends AbstractDAOTest {
   @Test
   public void testSaveAddStep() {
     Progress actual = dao.get(WORKFLOW_PROGRESS_ID_1);
-    ProgressStep step = makePoolProgressStep(1);
+    ProgressStep step = makePoolProgressStep(POOL_ID, 1);
+    step.setProgress(actual);
 
     actual.getSteps().add(step);
     progress1.getSteps().add(step);
@@ -116,50 +127,27 @@ public class HibernateProgressDaoTest extends AbstractDAOTest {
     assertEquivalent(progress1, dao.get(WORKFLOW_PROGRESS_ID_1));
   }
 
-  @Test
-  public void testSaveAddMultipleSteps() {
-    Progress actual = dao.get(WORKFLOW_PROGRESS_ID_2);
-    List<ProgressStep> newSteps = Arrays.asList(
-        makePoolProgressStep(2),
-        makeSampleProgressStep(3),
-        makeSampleProgressStep(4),
-        makeSampleProgressStep(5),
-        makePoolProgressStep(6));
-
-    actual.getSteps().addAll(newSteps);
-    progress2.getSteps().addAll(newSteps);
-
-    dao.save(actual);
-    sessionFactory.getCurrentSession().evict(actual);
-
-    assertEquivalent(progress2, dao.get(WORKFLOW_PROGRESS_ID_2));
-  }
-
-  /**
-   * Create a SampleProgressStep with only a step number.  All other fields are null.
-   */
-  private SampleProgressStep makeSampleProgressStep(int stepNumber) {
+  private SampleProgressStep makeSampleProgressStep(long sampleId, int stepNumber) {
     SampleProgressStep step = new SampleProgressStep();
-
+    Sample sample = new SampleImpl();
+    sample.setId(sampleId);
+    step.setInput(sample);
     step.setStepNumber(stepNumber);
-
     return step;
   }
 
-  /**
-   * Create a PoolProgressStep with only a step number.  All other fields are null.
-   */
-  private PoolProgressStep makePoolProgressStep(int stepNumber) {
+  private PoolProgressStep makePoolProgressStep(long poolId, int stepNumber) {
     PoolProgressStep step = new PoolProgressStep();
-
+    Pool pool = new PoolImpl();
+    pool.setId(poolId);
+    step.setInput(pool);
     step.setStepNumber(stepNumber);
-
     return step;
   }
 
   private Progress createProgress1() {
     Progress progress = makeProgress(LOAD_SEQUENCER, getDefaultUser(), new Date(), new Date(),
-        Collections.singletonList(makeSampleProgressStep(0)));
+        Collections.singletonList(makeSampleProgressStep(PROGRESS1_SAMPLE_ID, 0)));
     progress.setId(WORKFLOW_PROGRESS_ID_1);
 
     return progress;
@@ -167,7 +155,7 @@ public class HibernateProgressDaoTest extends AbstractDAOTest {
 
   private Progress createProgress2() {
     Progress progress = makeProgress(LOAD_SEQUENCER, getDefaultUser(), new Date(), new Date(),
-        Arrays.asList(makeSampleProgressStep(0), makePoolProgressStep(1)));
+        Arrays.asList(makeSampleProgressStep(PROGRESS2_SAMPLE_ID, 0), makePoolProgressStep(PROGRESS2_POOL_ID, 1)));
     progress.setId(WORKFLOW_PROGRESS_ID_2);
 
     return progress;
@@ -179,12 +167,12 @@ public class HibernateProgressDaoTest extends AbstractDAOTest {
 
   private Progress createProgressWithOrderedSteps() {
     return makeProgress(LOAD_SEQUENCER, getDefaultUser(), new Date(0), new Date(1),
-        Arrays.asList(makeSampleProgressStep(0), makePoolProgressStep(1)));
+        Arrays.asList(makeSampleProgressStep(SAMPLE_ID, 0), makePoolProgressStep(POOL_ID, 1)));
   }
 
   private Progress createProgressWithUnorderedSteps() {
     return makeProgress(LOAD_SEQUENCER, getDefaultUser(), new Date(0), new Date(1),
-        Arrays.asList(makePoolProgressStep(1), makeSampleProgressStep(0)));
+        Arrays.asList(makePoolProgressStep(POOL_ID, 1), makeSampleProgressStep(SAMPLE_ID, 0)));
   }
 
   /**
