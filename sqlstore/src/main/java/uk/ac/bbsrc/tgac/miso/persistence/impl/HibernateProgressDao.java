@@ -52,11 +52,7 @@ public class HibernateProgressDao implements ProgressStore {
 
     if (progress.getSteps() != null) {
       for (ProgressStep step : progress.getSteps()) {
-        if (currentSession().contains(step)) {
-          currentSession().update(step);
-        } else {
-          currentSession().save(step);
-        }
+        currentSession().saveOrUpdate(step);
       }
     }
 
