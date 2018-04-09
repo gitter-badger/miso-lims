@@ -32,7 +32,7 @@
     <div id='workflowState'></div>
     <script type='text/javascript'>
       jQuery(document).ready(function() {
-        WorfklowState.init("workflowState", "${workflowId}", "${message}");
+        WorkflowView.init("workflowState", "${workflowId}", "${message}");
       });
     </script>
   </div>
