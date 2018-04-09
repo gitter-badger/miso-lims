@@ -12,7 +12,7 @@ public abstract class AbstractWorkflow implements Workflow {
   public final Progress getProgress() {
     List<WorkflowStep> steps = getCompletedSteps();
     IntStream.range(0, steps.size()).forEach(i -> steps.get(i).getProgressStep().setStepNumber(i));
-    progress.setSteps(steps.stream().map(WorkflowStep::getProgressStep).collect(Collectors.toList()));
+    progress.setSteps(steps.stream().map(WorkflowStep::getProgressStep).peek(step -> step.setProgress(progress)).collect(Collectors.toList()));
     return progress;
   }
 
