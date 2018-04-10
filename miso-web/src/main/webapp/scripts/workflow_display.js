@@ -32,8 +32,8 @@ WorkflowDisplay = (function() {
     registerEnterHandler(inputTag, workflowId, function() {
       display.empty().append(jQuery("<img src='/styles/images/ajax-loader.gif'>"));
     }, function(newState) {
-      if (newState == null) {
-        display.empty().append(jQuery("<p>Workflow is complete!</p>"));
+      if (newState["inputTypes"] == null) {
+        display.empty().append(jQuery("<p>Would you like to execute this workflow?</p>"));
       } else {
         updateDisplay(display, newState);
       }

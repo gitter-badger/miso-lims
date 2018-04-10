@@ -21,21 +21,25 @@ public class WorkflowRestController extends RestController {
   WorkflowManager workflowManager;
 
   @RequestMapping(value = "/process", method = RequestMethod.POST)
-  public @ResponseBody
-  WorkflowStateDto process(@RequestParam("input") String input, @RequestParam("id") long id) throws IOException {
+  public @ResponseBody WorkflowStateDto process(@RequestParam("input") String input, @RequestParam("id") long id) throws IOException {
     Workflow workflow = workflowManager.loadWorkflow(id);
     workflowManager.processInput(workflow, input);
-    if (workflow.isComplete()) {
-      workflowManager.execute(workflow);
-      return null;
-    }
 
-    WorkflowStepPrompt prompt = workflow.getNextStep();
     WorkflowStateDto workflowStateDto = new WorkflowStateDto();
     workflowStateDto.setWorkflowId(id);
-    workflowStateDto.setMessage(prompt.getMessage());
     workflowStateDto.setLog(workflow.getLog());
+    if (!workflow.isComplete()) {
+      WorkflowStepPrompt prompt = workflow.getNextStep();
+      workflowStateDto.setMessage(prompt.getMessage());
+      workflowStateDto.setInputTypes(prompt.getInputTypes());
+    }
 
     return workflowStateDto;
+  }
+
+  @RequestMapping(value = "/execute", method = RequestMethod.POST)
+  public @ResponseBody WorkflowStateDto execute(@RequestParam("id") long id) throws IOException {
+    workflowManager.execute(workflowManager.loadWorkflow(id));
+    return new WorkflowStateDto();
   }
 }
