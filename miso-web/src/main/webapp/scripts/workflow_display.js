@@ -1,7 +1,10 @@
 WorkflowDisplay = (function() {
   var processInput = function(input, workflowId, onSuccess) {
     var url = "/miso/rest/workflow/process";
-    var queryUrl = encodeURI(url + "/?" + jQuery.param({input: input, id: workflowId}));
+    var queryUrl = encodeURI(url + "/?" + jQuery.param({
+      input: input,
+      id: workflowId
+    }));
 
     jQuery.ajax({
       "dataType": "json",
@@ -21,8 +24,19 @@ WorkflowDisplay = (function() {
     return jQuery("<p>" + message + "</p>");
   };
 
-  var makeInputTag = function() {
-    return jQuery("<input/>").attr({type: "text"});
+  var makeInputTag = function(display, workflowId) {
+    var inputTag = jQuery("<input/>").attr({type: "text"});
+
+    registerEnterHandler(inputTag, workflowId, function() {
+      display.empty().append(jQuery("<img src='/styles/images/ajax-loader.gif'>"));
+    }, function(newState) {
+      if (newState == null) {
+        display.empty().append(jQuery("<p>Workflow is complete!</p>"));
+      } else {
+        updateDisplay(display, newState);
+      }
+    });
+    return inputTag;
   };
 
   var registerEnterHandler = function(tag, workflowId, onLoad, onSuccess) {
@@ -46,22 +60,10 @@ WorkflowDisplay = (function() {
   };
 
   var updateDisplay = function(display, state) {
-    var inputTag = makeInputTag();
+    display.empty()
+      .append(makeMessageTag(state["message"])).append(makeInputTag(display, state["workflowId"])).append(makeLog(state["log"]))
+      .children("input").focus();
 
-    registerEnterHandler(inputTag, state["workflowId"],
-      function() {
-        display.empty().append(jQuery("<img src='/styles/images/ajax-loader.gif'>"));
-      },
-      function(newState) {
-        if (newState == null) {
-          display.empty().append(jQuery("<p>Workflow is complete!</p>"));
-        } else {
-          updateDisplay(display, newState);
-      }
-    });
-
-    display.empty().append(makeMessageTag(state["message"])).append(inputTag).append(makeLog(state["log"]));
-    inputTag.focus();
   };
 
   return {
