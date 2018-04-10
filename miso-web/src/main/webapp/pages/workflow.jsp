@@ -29,10 +29,10 @@
       ${title}
     </h1>
 
-    <div id='workflowPosition'></div>
+    <div id="workflowDisplay"></div>
     <script type='text/javascript'>
       jQuery(document).ready(function() {
-        WorkflowPosition.init("workflowPosition", "${workflowId}", "${message}");
+        WorkflowDisplay.init("workflowDisplay", "${workflowId}", "${message}");
       });
     </script>
   </div>

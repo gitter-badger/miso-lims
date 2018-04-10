@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import uk.ac.bbsrc.tgac.miso.core.data.workflow.Workflow;
 import uk.ac.bbsrc.tgac.miso.core.data.workflow.WorkflowStepPrompt;
-import uk.ac.bbsrc.tgac.miso.dto.WorkflowPositionDto;
+import uk.ac.bbsrc.tgac.miso.dto.WorkflowStateDto;
 import uk.ac.bbsrc.tgac.miso.service.workflow.WorkflowManager;
 
 @Controller
@@ -21,7 +21,8 @@ public class WorkflowRestController extends RestController {
   WorkflowManager workflowManager;
 
   @RequestMapping(value = "/process", method = RequestMethod.POST)
-  public @ResponseBody WorkflowPositionDto process(@RequestParam("input") String input, @RequestParam("id") long id) throws IOException {
+  public @ResponseBody
+  WorkflowStateDto process(@RequestParam("input") String input, @RequestParam("id") long id) throws IOException {
     Workflow workflow = workflowManager.loadWorkflow(id);
     workflowManager.processInput(workflow, input);
     if (workflow.isComplete()) {
@@ -30,10 +31,11 @@ public class WorkflowRestController extends RestController {
     }
 
     WorkflowStepPrompt prompt = workflow.getNextStep();
-    WorkflowPositionDto workflowPositionDto = new WorkflowPositionDto();
-    workflowPositionDto.setMessage(prompt.getMessage());
-    workflowPositionDto.setInputTypes(prompt.getDataTypes());
+    WorkflowStateDto workflowStateDto = new WorkflowStateDto();
+    workflowStateDto.setWorkflowId(id);
+    workflowStateDto.setMessage(prompt.getMessage());
+    workflowStateDto.setLog(workflow.getLog());
 
-    return workflowPositionDto;
+    return workflowStateDto;
   }
 }

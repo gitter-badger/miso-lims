@@ -5,12 +5,14 @@ import static uk.ac.bbsrc.tgac.miso.core.data.workflow.ProgressStep.InputType;
 import java.util.List;
 import java.util.Set;
 
-public class WorkflowPositionDto {
+/**
+ * Represents a user's position in a Workflow
+ */
+public class WorkflowStateDto {
+  private long workflowId;
   private String message;
   private Set<InputType> inputTypes;
   private List<String> log;
-  private int stepNumber;
-  private long workflowId;
 
   public String getMessage() {
     return message;
@@ -36,19 +38,11 @@ public class WorkflowPositionDto {
     this.log = log;
   }
 
-  public int getStepNumber() {
-    return stepNumber;
-  }
-
-  public void setStepNumber(int stepNumber) {
-    this.stepNumber = stepNumber;
-  }
-
-  public long getId() {
+  public long getWorkflowId() {
     return workflowId;
   }
 
-  public void setId(long workflowId) {
+  public void setWorkflowId(long workflowId) {
     this.workflowId = workflowId;
   }
 }
