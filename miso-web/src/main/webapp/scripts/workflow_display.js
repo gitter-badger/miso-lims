@@ -1,5 +1,5 @@
 WorkflowDisplay = (function() {
-  var processInput = function(input, workflowId, onSuccess) {
+  var processInput = function(input, workflowId, onSuccess, onError) {
     var url = "/miso/rest/workflow/process";
     var queryUrl = encodeURI(url + "/?" + jQuery.param({
       input: input,
@@ -14,8 +14,8 @@ WorkflowDisplay = (function() {
       "success": function(result) {
         onSuccess(result);
       },
-      "error": function() {
-        // todo
+      "error": function(xhr) {
+        onError(JSON.parse(xhr["responseText"])["data"]["GENERAL"]);
       }
     })
   };
@@ -37,16 +37,19 @@ WorkflowDisplay = (function() {
       } else {
         updateDisplay(display, newState);
       }
+    }, function(errorText) {
+      // todo
+      alert(errorText);
     });
 
     return inputTag;
   };
 
-  var registerEnterHandler = function(tag, workflowId, onLoad, onSuccess) {
+  var registerEnterHandler = function(tag, workflowId, onLoad, onSuccess, onError) {
     tag.keypress(function(e) {
       if (e.which === 13) {
         onLoad();
-        processInput(tag.val(), workflowId, onSuccess);
+        processInput(tag.val(), workflowId, onSuccess, onError);
       }
     })
   };
@@ -57,7 +60,7 @@ WorkflowDisplay = (function() {
 
   var makeLog = function(logEntries) {
     var table = jQuery("<table>").addClass("workflowLogTable");
-    table.append(jQuery("<tr>").append(jQuery("<th>Workflow Log</th>")));
+    table.append(jQuery("<tr>").append(jQuery("<th>Completed Steps:</th>")));
 
     for (var i = logEntries.length - 1; i >= 0; i--) {
       table.append(makeLogEntry(logEntries[i]));
