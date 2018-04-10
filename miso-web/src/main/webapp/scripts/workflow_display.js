@@ -49,7 +49,13 @@ WorkflowDisplay = (function() {
       }
     });
 
-    display.empty().append(makeMessageTag(state["message"])).append(inputTag);
+    var log = jQuery("<table>").addClass("workflowLogTable");
+    var logEntries = state["log"];
+    for (var i = 0; i < logEntries.length; ++i) {
+      log.append(jQuery("<tr>").append(jQuery("<td>" + logEntries[i] + "</td>")).append(jQuery("<td>button</td>")));
+    }
+
+    display.empty().append(makeMessageTag(state["message"])).append(inputTag).append(log);
     inputTag.focus();
   };
 
