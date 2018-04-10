@@ -34,29 +34,35 @@ WorkflowPosition = (function() {
     })
   };
 
-  var updatePosition = function(positionDiv, message, workflowId) {
-    var messageTag = makeMessageTag(message);
-    var inputTag = makeInputTag(positionDiv, workflowId);
+  var updatePosition = function(positionDiv, position) {
+    var inputTag = makeInputTag();
 
-    registerEnterHandler(inputTag, workflowId,
+    registerEnterHandler(inputTag, position["workflowId"],
       function() {
         positionDiv.empty().append(jQuery("<img>").attr("src", "/styles/images/ajax-loader.gif"));
       },
-      function(workflowPosition) {
-        if (workflowPosition == null) {
+      function(position) {
+        if (position == null) {
           positionDiv.empty().append(jQuery("<p>Workflow is complete!</p>"));
         } else {
-          updatePosition(positionDiv, workflowPosition["message"], workflowId);
+          updatePosition(positionDiv, position);
       }
     });
 
-    positionDiv.empty().append(messageTag).append(inputTag);
+    positionDiv.empty().append(makeMessageTag(position["message"])).append(inputTag);
     inputTag.focus();
   };
 
   return {
     init: function(divId, workflowId, message) {
-      updatePosition(jQuery("#" + divId), message, workflowId);
+      var workflowPosition = {
+        message: message,
+        inputTypes: null,
+        stepNumber: 0,
+        log: [],
+        workflowId: workflowId
+      };
+      updatePosition(jQuery("#" + divId), workflowPosition);
     }
   }
 })();

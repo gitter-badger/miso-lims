@@ -9,7 +9,7 @@ public class WorkflowPositionDto {
   private String message;
   private Set<InputType> inputTypes;
   private List<String> log;
-  private int currentStep;
+  private int stepNumber;
   private long workflowId;
 
   public String getMessage() {
@@ -36,12 +36,12 @@ public class WorkflowPositionDto {
     this.log = log;
   }
 
-  public int getCurrentStep() {
-    return currentStep;
+  public int getStepNumber() {
+    return stepNumber;
   }
 
-  public void setCurrentStep(int currentStep) {
-    this.currentStep = currentStep;
+  public void setStepNumber(int stepNumber) {
+    this.stepNumber = stepNumber;
   }
 
   public long getId() {
