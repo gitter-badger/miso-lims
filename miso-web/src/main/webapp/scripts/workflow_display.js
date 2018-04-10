@@ -35,15 +35,14 @@ WorkflowDisplay = (function() {
   };
 
   var makeLog = function(logEntries) {
-    // var log = jQuery("<div>");
     var table = jQuery("<table>").addClass("workflowLogTable");
+    table.append(jQuery("<tr>").append(jQuery("<th>Workflow Log</th>")));
 
     for (var i = 0; i < logEntries.length; ++i) {
       table.append(jQuery("<tr>").append(jQuery("<td>" + logEntries[i] + "</td>")).append(jQuery("<td>button</td>")));
     }
 
-    // return log.append(table);
-    return table;
+    return jQuery("<div>").append(table);
   };
 
   var updateDisplay = function(display, state) {
