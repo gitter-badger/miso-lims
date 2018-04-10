@@ -25,7 +25,9 @@ WorkflowDisplay = (function() {
   };
 
   var makeInputTag = function(display, workflowId) {
-    var inputTag = jQuery("<input/>").attr({type: "text"});
+    var inputTag = jQuery("<input/>").attr({
+      type: "text"
+    });
 
     registerEnterHandler(inputTag, workflowId, function() {
       display.empty().append(jQuery("<img src='/styles/images/ajax-loader.gif'>"));
@@ -36,6 +38,7 @@ WorkflowDisplay = (function() {
         updateDisplay(display, newState);
       }
     });
+
     return inputTag;
   };
 
@@ -48,22 +51,24 @@ WorkflowDisplay = (function() {
     })
   };
 
+  var makeLogEntry = function(text) {
+    return jQuery("<tr>").append(jQuery("<td>" + text + "</td>")).append(jQuery("<td><img src='/styles/images/redo.svg' class='redoStep'></td>"));
+  };
+
   var makeLog = function(logEntries) {
     var table = jQuery("<table>").addClass("workflowLogTable");
     table.append(jQuery("<tr>").append(jQuery("<th>Workflow Log</th>")));
 
-    for (var i = 0; i < logEntries.length; ++i) {
-      table.append(jQuery("<tr>").append(jQuery("<td>" + logEntries[i] + "</td>")).append(jQuery("<td>button</td>")));
+    for (var i = logEntries.length - 1; i >= 0; i--) {
+      table.append(makeLogEntry(logEntries[i]));
     }
 
     return jQuery("<div>").append(table);
   };
 
   var updateDisplay = function(display, state) {
-    display.empty()
-      .append(makeMessageTag(state["message"])).append(makeInputTag(display, state["workflowId"])).append(makeLog(state["log"]))
-      .children("input").focus();
-
+    display.empty().append(makeMessageTag(state["message"])).append(makeInputTag(display, state["workflowId"])).append(
+        makeLog(state["log"])).children("input").focus();
   };
 
   return {
