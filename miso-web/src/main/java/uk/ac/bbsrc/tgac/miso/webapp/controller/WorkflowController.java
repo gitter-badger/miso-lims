@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import uk.ac.bbsrc.tgac.miso.core.data.workflow.Workflow;
 import uk.ac.bbsrc.tgac.miso.core.data.workflow.WorkflowStepPrompt;
 import uk.ac.bbsrc.tgac.miso.service.workflow.WorkflowManager;
@@ -27,6 +29,7 @@ public class WorkflowController {
     model.put("workflowId", workflow.getProgress().getId());
     WorkflowStepPrompt prompt = workflow.getNextStep();
     model.put("message", prompt.getMessage());
+    model.put("inputTypes", new ObjectMapper().writeValueAsString(prompt.getInputTypes()));
 
     return new ModelAndView("/pages/workflow.jsp", model);
   }

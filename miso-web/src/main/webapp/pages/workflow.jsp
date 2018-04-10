@@ -32,7 +32,7 @@
     <div id="workflowDisplay"></div>
     <script type='text/javascript'>
       jQuery(document).ready(function() {
-        WorkflowDisplay.init("workflowDisplay", "${workflowId}", "${message}");
+        WorkflowDisplay.init("workflowDisplay", "${workflowId}", "${message}", ${inputTypes});
       });
     </script>
   </div>

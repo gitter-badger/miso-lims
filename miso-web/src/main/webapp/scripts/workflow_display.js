@@ -75,7 +75,7 @@ WorkflowDisplay = (function() {
   };
 
   return {
-    init: function(divId, workflowId, message) {
+    init: function(divId, workflowId, message, inputTypes) {
       var state = {
         workflowId: workflowId,
         message: message,
