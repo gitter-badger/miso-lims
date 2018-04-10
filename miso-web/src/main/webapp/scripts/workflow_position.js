@@ -34,23 +34,23 @@ WorkflowPosition = (function() {
     })
   };
 
-  var updatePosition = function(position, message, workflowId) {
+  var updatePosition = function(positionDiv, message, workflowId) {
     var messageTag = makeMessageTag(message);
-    var inputTag = makeInputTag(position, workflowId);
+    var inputTag = makeInputTag(positionDiv, workflowId);
 
     registerEnterHandler(inputTag, workflowId,
       function() {
-        position.empty().append(jQuery("<img>").attr("src", "/styles/images/ajax-loader.gif"));
+        positionDiv.empty().append(jQuery("<img>").attr("src", "/styles/images/ajax-loader.gif"));
       },
-      function(prompt) {
-        if (prompt == null) {
-          position.empty().append(jQuery("<p>Workflow is complete!</p>"));
+      function(workflowPosition) {
+        if (workflowPosition == null) {
+          positionDiv.empty().append(jQuery("<p>Workflow is complete!</p>"));
         } else {
-          updatePosition(position, prompt["message"], workflowId);
+          updatePosition(positionDiv, workflowPosition["message"], workflowId);
       }
     });
 
-    position.empty().append(messageTag).append(inputTag);
+    positionDiv.empty().append(messageTag).append(inputTag);
     inputTag.focus();
   };
 
