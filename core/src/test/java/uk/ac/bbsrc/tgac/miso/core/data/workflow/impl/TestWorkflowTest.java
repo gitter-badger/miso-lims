@@ -224,12 +224,12 @@ public class TestWorkflowTest {
   }
 
   private void assertIntegerPrompt(WorkflowStepPrompt prompt) {
-    assertEquals(Sets.newHashSet(InputType.INTEGER), prompt.getDataTypes());
+    assertEquals(Sets.newHashSet(InputType.INTEGER), prompt.getInputTypes());
     assertEquals("Input a concentration as an integer.", prompt.getMessage());
   }
 
   private void assertPoolPrompt(WorkflowStepPrompt prompt) {
-    assertEquals(Sets.newHashSet(InputType.POOL), prompt.getDataTypes());
+    assertEquals(Sets.newHashSet(InputType.POOL), prompt.getInputTypes());
     assertEquals("Scan a Pool to modify its concentration.", prompt.getMessage());
   }
 
