@@ -38,8 +38,7 @@ public class WorkflowRestController extends RestController {
   }
 
   @RequestMapping(value = "/execute", method = RequestMethod.POST)
-  public @ResponseBody WorkflowStateDto execute(@RequestParam("id") long id) throws IOException {
+  public @ResponseBody void execute(@RequestParam("id") long id) throws IOException {
     workflowManager.execute(workflowManager.loadWorkflow(id));
-    return new WorkflowStateDto();
   }
 }
