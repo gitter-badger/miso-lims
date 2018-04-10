@@ -2067,3 +2067,12 @@ button.disabled {
     border: 1px solid black;
     font-size: 12px;
 }
+
+.workflowLogTable {
+    position: absolute;
+    bottom: 0;
+}
+
+.workflowLogTable td {
+    border: 1px solid black;
+}

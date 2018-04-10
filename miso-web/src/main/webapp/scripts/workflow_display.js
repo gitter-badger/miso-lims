@@ -25,13 +25,25 @@ WorkflowDisplay = (function() {
     return jQuery("<input/>").attr({type: "text"});
   };
 
-  var registerEnterHandler = function(inputTag, workflowId, onLoad, onSuccess) {
-    inputTag.keypress(function(e) {
+  var registerEnterHandler = function(tag, workflowId, onLoad, onSuccess) {
+    tag.keypress(function(e) {
       if (e.which === 13) {
         onLoad();
-        processInput(inputTag.val(), workflowId, onSuccess);
+        processInput(tag.val(), workflowId, onSuccess);
       }
     })
+  };
+
+  var makeLog = function(logEntries) {
+    // var log = jQuery("<div>");
+    var table = jQuery("<table>").addClass("workflowLogTable");
+
+    for (var i = 0; i < logEntries.length; ++i) {
+      table.append(jQuery("<tr>").append(jQuery("<td>" + logEntries[i] + "</td>")).append(jQuery("<td>button</td>")));
+    }
+
+    // return log.append(table);
+    return table;
   };
 
   var updateDisplay = function(display, state) {
@@ -39,7 +51,7 @@ WorkflowDisplay = (function() {
 
     registerEnterHandler(inputTag, state["workflowId"],
       function() {
-        display.empty().append(jQuery("<img>").attr("src", "/styles/images/ajax-loader.gif"));
+        display.empty().append(jQuery("<img src='/styles/images/ajax-loader.gif'>"));
       },
       function(newState) {
         if (newState == null) {
@@ -49,13 +61,7 @@ WorkflowDisplay = (function() {
       }
     });
 
-    var log = jQuery("<table>").addClass("workflowLogTable");
-    var logEntries = state["log"];
-    for (var i = 0; i < logEntries.length; ++i) {
-      log.append(jQuery("<tr>").append(jQuery("<td>" + logEntries[i] + "</td>")).append(jQuery("<td>button</td>")));
-    }
-
-    display.empty().append(makeMessageTag(state["message"])).append(inputTag).append(log);
+    display.empty().append(makeMessageTag(state["message"])).append(inputTag).append(makeLog(state["log"]));
     inputTag.focus();
   };
 
