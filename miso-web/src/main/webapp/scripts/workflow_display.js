@@ -1,4 +1,21 @@
 WorkflowDisplay = (function() {
+  var executeWorkflow = function(workflowId, onLoad, onSuccess) {
+    onLoad();
+
+    jQuery.ajax({
+      "dateType": "json",
+      "type": "POST",
+      "url": encodeURI("miso/rest/workflow/execute/?" + jQuery.param({
+        id: workflowId
+      })),
+      "contentType": "application/json; charset=utf8",
+      "success": onSuccess,
+      "error": function() {
+        // todo
+      }
+    });
+  };
+
   var processInput = function(input, workflowId, onSuccess, onError) {
     var url = "/miso/rest/workflow/process";
     var queryUrl = encodeURI(url + "/?" + jQuery.param({
@@ -24,14 +41,18 @@ WorkflowDisplay = (function() {
     return jQuery("<p>" + message + "</p>");
   };
 
+  var makeOnLoad = function(display) {
+    return function() {
+      display.empty().append(jQuery("<img src='/styles/images/ajax-loader.gif'>"));
+    }
+  };
+  
   var makeInputTag = function(display, workflowId) {
     var inputTag = jQuery("<input/>").attr({
       type: "text"
     });
 
-    registerEnterHandler(inputTag, workflowId, function() {
-      display.empty().append(jQuery("<img src='/styles/images/ajax-loader.gif'>"));
-    }, function(newState) {
+    registerEnterHandler(inputTag, workflowId, makeOnLoad(display), function(newState) {
       if (newState["inputTypes"] == null) {
         display.empty().append(jQuery("<p>Would you like to execute this workflow?</p>"));
       } else {
@@ -69,19 +90,27 @@ WorkflowDisplay = (function() {
     return jQuery("<div>").append(table);
   };
 
-  var updateDisplay = function(display, state) {
-    display.empty().append(makeMessageTag(state["message"])).append(makeInputTag(display, state["workflowId"])).append(
-        makeLog(state["log"])).children("input").focus();
+  var makeExecuteButton = function(display, workflowId) {
+    return jQuery("<a class='ui-button ui-state-default'>").click(function() {
+      executeWorkflow(workflowId, makeOnLoad(display), function() {
+        display.empty().append(jQuery("<p>Workflow has been executed.</p>"));
+      });
+    })
+  };
+
+  var updateDisplay = function(display, workflowId, log, message, inputTypes) {
+    display.empty().append(makeMessageTag(message));
+    if (inputTypes == null) {
+      display.append(makeExecuteButton(display, workflowId));
+    } else {
+      display.append(makeInputTag(display, workflowId));
+    }
+    display.append(makeLog(log)).children("input").focus();
   };
 
   return {
     init: function(divId, workflowId, message, inputTypes) {
-      var state = {
-        workflowId: workflowId,
-        message: message,
-        log: []
-      };
-      updateDisplay(jQuery("#" + divId), state);
+      updateDisplay(jQuery("#" + divId), workflowId, [], message, inputTypes);
     }
   }
 })();
