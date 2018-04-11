@@ -50,15 +50,13 @@ WorkflowDisplay = (function() {
   }
 
   function makeInputTag(workflowId) {
-    var inputTag = jQuery("<input/>").attr({
-      type: "text"
-    });
+    var inputTag = jQuery("<input type='text'>");
 
     registerEnterHandler(inputTag, workflowId, makeOnLoad(), function(newState) {
       if (!newState["inputTypes"]) {
-        updateDisplay(newState["workflowId"], newState["log"], "Do you want to execute this workflow?");
+        confirmExecution(newState["workflowId"], newState["log"]);
       } else {
-        updateDisplay(newState["workflowId"], newState["log"], newState["message"], newState["inputTypes"]);
+        promptUser(newState["workflowId"], newState["message"], newState["inputTypes"], newState["log"]);
       }
     }, function(errorText) {
       // todo
@@ -102,20 +100,19 @@ WorkflowDisplay = (function() {
     })
   }
 
-  function updateDisplay(workflowId, log, message, inputTypes) {
-    display.empty().append(makeMessageTag(message));
-    if (!inputTypes) {
-      display.append(makeExecuteButton(workflowId));
-    } else {
-      display.append(makeInputTag(workflowId));
-    }
-    display.append(makeLog(log)).children("input").focus();
+  function confirmExecution(workflowId, log) {
+    display.empty().append(makeMessageTag("Do you want to execute this workflow?")).append(makeExecuteButton(workflowId)).append(
+        makeLog(log));
+  }
+
+  function promptUser(workflowId, message, inputTypes, log) {
+    display.empty().append(makeMessageTag(message)).append(makeInputTag(workflowId)).append(makeLog(log)).children("input").focus();
   }
 
   return {
     init: function(divId, workflowId, message, inputTypes) {
       display = jQuery("#" + divId);
-      updateDisplay(workflowId, [], message, inputTypes);
+      promptUser(workflowId, message, inputTypes, []);
     }
   }
 })();
