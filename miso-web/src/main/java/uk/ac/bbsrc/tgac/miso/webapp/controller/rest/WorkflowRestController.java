@@ -26,9 +26,14 @@ public class WorkflowRestController extends RestController {
     Workflow workflow = workflowManager.loadWorkflow(id);
     workflowManager.processInput(workflow, stepNumber, input);
 
+    return toWorkflowStateDto(workflow, id, stepNumber);
+  }
+
+  private WorkflowStateDto toWorkflowStateDto(Workflow workflow, long id, int stepNumber) {
     WorkflowStateDto workflowStateDto = new WorkflowStateDto();
     workflowStateDto.setWorkflowId(id);
     workflowStateDto.setLog(workflow.getLog());
+
     if (!workflow.isComplete()) {
       WorkflowStepPrompt prompt = workflow.getNextStep();
       workflowStateDto.setMessage(prompt.getMessage());
