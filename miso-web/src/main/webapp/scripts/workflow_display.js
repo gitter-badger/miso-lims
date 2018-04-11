@@ -17,7 +17,7 @@ WorkflowDisplay = (function() {
   }
   
   function showSuccess() {
-    display.empty().append(jQuery("<p>Successfully completed workflow.</p>"));
+    display.empty().append(jQuery("<p>Workflow was successfully completed.</p>"));
   }
 
   function executeWorkflow() {
@@ -28,9 +28,10 @@ WorkflowDisplay = (function() {
     });
   }
 
-  function showError(text) {
+  function showError(errorText) {
     loadingGif.remove();
     display.children().show();
+    display.children("input").after(jQuery("<p>" + errorText + "</p>"));
   }
 
   function processInput(input) {
@@ -48,7 +49,7 @@ WorkflowDisplay = (function() {
         showPrompt(state["message"], state["inputTypes"], state["log"]);
       }
     }, function(xhr) {
-      showError(console.log(JSON.parse(xhr["responseText"])["data"]["GENERAL"]));
+      showError(JSON.parse(xhr["responseText"])["data"]["GENERAL"]);
     });
   }
 
