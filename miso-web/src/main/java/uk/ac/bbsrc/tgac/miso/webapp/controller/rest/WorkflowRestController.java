@@ -35,10 +35,11 @@ public class WorkflowRestController extends RestController {
     workflowStateDto.setLog(workflow.getLog());
 
     if (!workflow.isComplete()) {
-      WorkflowStepPrompt prompt = workflow.getNextStep();
+      int nextStepNumber = stepNumber + 1;
+      WorkflowStepPrompt prompt = workflow.getStep(nextStepNumber);
       workflowStateDto.setMessage(prompt.getMessage());
       workflowStateDto.setInputTypes(prompt.getInputTypes());
-      workflowStateDto.setStepNumber(stepNumber + 1);
+      workflowStateDto.setStepNumber(nextStepNumber);
     }
 
     return workflowStateDto;
@@ -47,5 +48,12 @@ public class WorkflowRestController extends RestController {
   @RequestMapping(value = "/execute", method = RequestMethod.POST)
   public @ResponseBody void execute(@RequestParam("id") long id) throws IOException {
     workflowManager.execute(workflowManager.loadWorkflow(id));
+  }
+
+  @RequestMapping(value = "/setstep", method = RequestMethod.GET)
+  public @ResponseBody WorkflowStateDto setStep(@RequestParam("id") long id, @RequestParam("stepNumber") int stepNumber)
+      throws IOException {
+    Workflow workflow = workflowManager.loadWorkflow(id);
+    return toWorkflowStateDto(workflow, id, stepNumber);
   }
 }

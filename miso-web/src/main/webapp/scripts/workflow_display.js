@@ -1,41 +1,52 @@
 WorkflowDisplay = (function() {
   var display;
+  var workflowId;
+  var stepNumber;
 
-  function executeWorkflow(workflowId, onLoad, onSuccess) {
-    onLoad();
+  function showSuccess() {
+    display.empty().append(jQuery("<p>Workflow has been executed.</p>"));
+  }
+
+  function executeWorkflow() {
+    showLoading();
 
     jQuery.ajax({
-      "dateType": "json",
+      "dataType": "json",
       "type": "POST",
       "url": encodeURI("/miso/rest/workflow/execute/?" + jQuery.param({
         id: workflowId
       })),
       "contentType": "application/json; charset=utf8",
-      "success": onSuccess,
+      "success": showSuccess,
       "error": function() {
         // todo
       }
     });
   }
 
-  function processInput(workflowId, stepNumber, input, onSuccess, onError) {
-    var url = "/miso/rest/workflow/process";
-    var queryUrl = encodeURI(url + "/?" + jQuery.param({
-      id: workflowId,
-      stepNumber: stepNumber,
-      input: input
-    }));
+  function processInput(input) {
+    showLoading();
 
     jQuery.ajax({
       "dataType": "json",
       "type": "POST",
-      "url": queryUrl,
+      "url": encodeURI("/miso/rest/workflow/process/?" + jQuery.param({
+        id: workflowId,
+        stepNumber: stepNumber,
+        input: input
+      })),
       "contentType": "application/json; charset=utf8",
-      "success": function(result) {
-        onSuccess(result);
+      "success": function(state) {
+        if (!state["inputTypes"]) {
+          showConfirmExecution(state["log"]);
+        } else {
+          stepNumber = state["stepNumber"];
+          showPrompt(state["message"], state["inputTypes"], state["log"]);
+        }
       },
       "error": function(xhr) {
-        onError(JSON.parse(xhr["responseText"])["data"]["GENERAL"]);
+        // todo
+        console.log(JSON.parse(xhr["responseText"])["data"]["GENERAL"]);
       }
     })
   }
@@ -44,46 +55,60 @@ WorkflowDisplay = (function() {
     return jQuery("<p>" + message + "</p>");
   }
 
-  function makeOnLoad() {
-    return function() {
-      display.empty().append(jQuery("<img src='/styles/images/ajax-loader.gif'>"));
-    };
+  function showLoading() {
+    display.empty().append(jQuery("<img src='/styles/images/ajax-loader.gif'>"));
   }
 
-  function makeInputTag(workflowId, stepNumber) {
+  function makeInputTag() {
     var inputTag = jQuery("<input type='text'>");
 
-    registerEnterHandler(inputTag, workflowId, stepNumber, makeOnLoad(), function(newState) {
-      if (!newState["inputTypes"]) {
-        confirmExecution(newState["workflowId"], newState["log"]);
-      } else {
-        promptUser(newState["workflowId"], newState["stepNumber"], newState["message"], newState["inputTypes"], newState["log"]);
-      }
-    }, function(errorText) {
-      // todo
-      alert(errorText);
+    registerEnterHandler(inputTag, function() {
+      processInput(inputTag.val());
     });
 
     return inputTag;
   }
 
-  function registerEnterHandler(tag, workflowId, stepNumber, onLoad, onSuccess, onError) {
+  function registerEnterHandler(tag, onEnter) {
     tag.keypress(function(e) {
       if (e.which === 13) {
-        onLoad();
-        processInput(workflowId, stepNumber, tag.val(), onSuccess, onError);
+        onEnter();
+      }
+    })
+  }
+
+  function updateStep() {
+    jQuery.ajax({
+      "dataType": "json",
+      "type": "GET",
+      "url": encodeURI("/miso/rest/workflow/setstep/?" + jQuery.param({
+        id: id,
+        // todo: send correct step number
+        // stepNumber: stepNumber
+      })),
+      "contentType": "application/json; charset=utf8",
+      "success": function(state) {
+        stepNumber = state["stepNumber"]
+        // todo
+      },
+      "error": function() {
+        // todo
       }
     })
   }
 
   function makeLogEntry(text) {
-    return jQuery("<tr>").append(jQuery("<td>" + text + "</td>")).append(
-        jQuery("<td><img src='/styles/images/redo.svg' class='redoStep'></td>"));
+    var redoButton = jQuery("<td><img src='/styles/images/redo.svg' class='redoStep'").click(function() {
+      updateStep(function(result) {
+        console.log(result);
+      });
+    });
+
+    return jQuery("<tr>").append(jQuery("<td>" + text + "</td>")).append(redoButton);
   }
 
   function makeLog(logEntries) {
-    var table = jQuery("<table>").addClass("workflowLogTable");
-    table.append(jQuery("<tr>").append(jQuery("<th>Completed Steps:</th>")));
+    var table = jQuery("<table class='workflowLogTable'><tr><th>Completed Steps:</th></tr>");
 
     // Iterate backwards to display a reverse chronological log
     for (var i = logEntries.length - 1; i >= 0; i--) {
@@ -93,27 +118,30 @@ WorkflowDisplay = (function() {
     return jQuery("<div>").append(table);
   }
 
-  function makeExecuteButton(workflowId) {
+  function makeExecuteButton() {
     return jQuery("<a class='ui-button ui-state-default'>").text("Execute").click(function() {
-      executeWorkflow(workflowId, makeOnLoad(), function() {
-        display.empty().append(jQuery("<p>Workflow has been executed.</p>"));
-      });
-    })
+      executeWorkflow();
+    });
   }
 
-  function confirmExecution(workflowId, log) {
-    display.empty().append(makeMessageTag("Do you want to execute this workflow?")).append(makeExecuteButton(workflowId)).append(
-        makeLog(log));
+  function showConfirmExecution(log) {
+    display.empty().append(makeMessageTag("Do you want to execute this workflow?")).append(makeExecuteButton()).append(makeLog(log));
   }
 
-  function promptUser(workflowId, stepNumber, message, inputTypes, log) {
-    display.empty().append(makeMessageTag(message)).append(makeInputTag(workflowId, stepNumber)).append(makeLog(log)).children("input").focus();
+  function showPrompt(message, inputTypes, log) {
+    display.empty().append(makeMessageTag(message)).append(makeInputTag()).append(makeLog(log)).children("input").focus();
+  }
+
+  function initDisplay(newDisplay, newWorkflowId, newStepNumber) {
+    display = newDisplay;
+    workflowId = newWorkflowId;
+    stepNumber = newStepNumber;
   }
 
   return {
     init: function(divId, workflowId, message, inputTypes) {
-      display = jQuery("#" + divId);
-      promptUser(workflowId, 0, message, inputTypes, []);
+      initDisplay(jQuery("#" + divId), workflowId, 0);
+      showPrompt(message, inputTypes, []);
     }
   }
 })();
