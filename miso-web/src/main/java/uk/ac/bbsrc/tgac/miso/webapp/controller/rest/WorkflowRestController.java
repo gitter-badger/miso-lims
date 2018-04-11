@@ -26,12 +26,11 @@ public class WorkflowRestController extends RestController {
     Workflow workflow = workflowManager.loadWorkflow(id);
     workflowManager.processInput(workflow, stepNumber, input);
 
-    return toWorkflowStateDto(workflow, id, stepNumber);
+    return toWorkflowStateDto(workflow, stepNumber);
   }
 
-  private WorkflowStateDto toWorkflowStateDto(Workflow workflow, long id, int stepNumber) {
+  private WorkflowStateDto toWorkflowStateDto(Workflow workflow, int stepNumber) {
     WorkflowStateDto workflowStateDto = new WorkflowStateDto();
-    workflowStateDto.setWorkflowId(id);
     workflowStateDto.setLog(workflow.getLog());
 
     if (!workflow.isComplete()) {
@@ -54,6 +53,6 @@ public class WorkflowRestController extends RestController {
   public @ResponseBody WorkflowStateDto setStep(@RequestParam("id") long id, @RequestParam("stepNumber") int stepNumber)
       throws IOException {
     Workflow workflow = workflowManager.loadWorkflow(id);
-    return toWorkflowStateDto(workflow, id, stepNumber);
+    return toWorkflowStateDto(workflow, stepNumber);
   }
 }

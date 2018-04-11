@@ -9,7 +9,6 @@ import java.util.Set;
  * Represents a user's position in a Workflow
  */
 public class WorkflowStateDto {
-  private long workflowId;
   private int stepNumber;
   private String message;
   private Set<InputType> inputTypes;
@@ -37,14 +36,6 @@ public class WorkflowStateDto {
 
   public void setLog(List<String> log) {
     this.log = log;
-  }
-
-  public long getWorkflowId() {
-    return workflowId;
-  }
-
-  public void setWorkflowId(long workflowId) {
-    this.workflowId = workflowId;
   }
 
   public int getStepNumber() {
