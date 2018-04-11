@@ -39,7 +39,9 @@ public class WorkflowRestController extends RestController {
     workflowStateDto.setLog(workflow.getLog());
     workflowStateDto.setStepNumber(stepNumber);
 
-    if (!workflow.isComplete() || stepNumber < workflow.getLog().size()) {
+    if (workflow.isComplete() && stepNumber >= workflow.getLog().size()) {
+      workflowStateDto.setMessage(workflow.getConfirmMessage());
+    } else {
       WorkflowStepPrompt prompt = workflow.getStep(stepNumber);
       workflowStateDto.setMessage(prompt.getMessage());
       workflowStateDto.setInputTypes(prompt.getInputTypes());

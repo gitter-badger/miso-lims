@@ -78,6 +78,12 @@ public class TestWorkflow extends AbstractWorkflow {
   }
 
   @Override
+  public String getConfirmMessage() {
+    return String.format("Pool %s (%s) will be modified to have concentration %d.", step1.getInput().getAlias(), step1.getInput().getName(),
+        step0.getInput());
+  }
+
+  @Override
   public void execute(WorkflowExecutor workflowExecutor) throws IOException {
     if (!isComplete()) throw new IllegalStateException("Workflow is not complete");
 

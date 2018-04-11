@@ -4,10 +4,10 @@ WorkflowDisplay = (function() {
   var stepNumber;
   var loadingGif = jQuery("<img src='/styles/images/ajax-loader.gif'>");
 
-  function ajax(requestType, url, onSuccess, onError) {
+  function ajax(method, url, onSuccess, onError) {
     showLoading();
     jQuery.ajax({
-      "type": requestType,
+      "type": method,
       "url": url,
       "contentType": "application/json; charset=utf8",
       "dataType": "json",
@@ -17,7 +17,7 @@ WorkflowDisplay = (function() {
   }
   
   function showSuccess() {
-    display.empty().append(jQuery("<p>Workflow has been executed.</p>"));
+    display.empty().append(jQuery("<p>Successfully completed workflow.</p>"));
   }
 
   function executeWorkflow() {
@@ -28,11 +28,7 @@ WorkflowDisplay = (function() {
     });
   }
 
-  function isComplete(state) {
-    return !state["message"] && !state["inputTypes"];
-  }
-
-  function showPreviousDisplay() {
+  function showError(text) {
     loadingGif.remove();
     display.children().show();
   }
@@ -46,14 +42,13 @@ WorkflowDisplay = (function() {
       workflowId = state["workflowId"];
       stepNumber = state["stepNumber"];
 
-      if (isComplete(state)) {
-        showConfirmExecution(state["log"]);
+      if (!state["inputTypes"]) {
+        showConfirm(state["message"], state["log"]);
       } else {
         showPrompt(state["message"], state["inputTypes"], state["log"]);
       }
     }, function(xhr) {
-      showPreviousDisplay();
-      console.log(JSON.parse(xhr["responseText"])["data"]["GENERAL"]);
+      showError(console.log(JSON.parse(xhr["responseText"])["data"]["GENERAL"]));
     });
   }
 
@@ -111,7 +106,7 @@ WorkflowDisplay = (function() {
   }
 
   function makeLog(logEntries) {
-    var table = jQuery("<table class='workflowLogTable'><tr><th>Completed Steps:</th></tr>");
+    var table = jQuery("<table class='workflowLogTable'>");
 
     // Iterate backwards to display a reverse chronological log
     for (var i = logEntries.length - 1; i >= 0; i--) {
@@ -122,13 +117,13 @@ WorkflowDisplay = (function() {
   }
 
   function makeExecuteButton() {
-    return jQuery("<a class='ui-button ui-state-default'>").text("Execute").click(function() {
+    return jQuery("<a class='ui-button ui-state-default'>").text("Confirm").click(function() {
       executeWorkflow();
     });
   }
 
-  function showConfirmExecution(log) {
-    display.empty().append(makeMessageTag("Do you want to execute this workflow?")).append(makeExecuteButton()).append(makeLog(log));
+  function showConfirm(message, log) {
+    display.empty().append(makeMessageTag(message)).append(makeExecuteButton()).append(makeLog(log));
   }
 
   function showPrompt(message, inputTypes, log) {

@@ -45,6 +45,11 @@ public interface Workflow {
    */
   void cancelInput();
 
+  /**
+   * @return short message describing what will be executed
+   */
+  String getConfirmMessage();
+
   void execute(WorkflowExecutor workflowExecutor) throws IOException;
 
   /**

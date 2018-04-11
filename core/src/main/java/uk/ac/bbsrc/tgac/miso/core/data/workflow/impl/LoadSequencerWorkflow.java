@@ -54,6 +54,11 @@ public class LoadSequencerWorkflow extends AbstractWorkflow {
   }
 
   @Override
+  public String getConfirmMessage() {
+    return null;
+  }
+
+  @Override
   public void execute(WorkflowExecutor workflowExecutor) throws IOException {
     throw new UnsupportedOperationException("Not implemented yet");
   }
