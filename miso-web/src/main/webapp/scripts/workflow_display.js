@@ -2,6 +2,7 @@ WorkflowDisplay = (function() {
   var display;
   var workflowId;
   var stepNumber;
+  var loadingGif = jQuery("<img src='/styles/images/ajax-loader.gif'>");
 
   function ajax(requestType, url, onSuccess, onError) {
     showLoading();
@@ -31,6 +32,11 @@ WorkflowDisplay = (function() {
     return !state["message"] && !state["inputTypes"];
   }
 
+  function showPreviousDisplay() {
+    loadingGif.remove();
+    display.children().show();
+  }
+
   function processInput(input) {
     ajax("POST", encodeURI("/miso/rest/workflow/process/?" + jQuery.param({
       id: workflowId,
@@ -46,7 +52,7 @@ WorkflowDisplay = (function() {
         showPrompt(state["message"], state["inputTypes"], state["log"]);
       }
     }, function(xhr) {
-      // todo
+      showPreviousDisplay();
       console.log(JSON.parse(xhr["responseText"])["data"]["GENERAL"]);
     });
   }
@@ -56,7 +62,9 @@ WorkflowDisplay = (function() {
   }
 
   function showLoading() {
-    display.empty().append(jQuery("<img src='/styles/images/ajax-loader.gif'>"));
+    // Hide children in case the request fails and we need to show them later
+    display.children().hide();
+    display.append(loadingGif);
   }
 
   function makeInputTag() {
