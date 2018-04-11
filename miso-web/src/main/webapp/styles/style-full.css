@@ -2069,8 +2069,6 @@ button.disabled {
 }
 
 .workflowLogTable {
-    position: absolute;
-    bottom: 0;
 }
 
 .workflowLogTable td {
