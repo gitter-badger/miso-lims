@@ -3,24 +3,27 @@ WorkflowDisplay = (function() {
   var workflowId;
   var stepNumber;
 
+  function ajax(requestType, url, onSuccess, onError) {
+    showLoading();
+    jQuery.ajax({
+      "type": requestType,
+      "url": url,
+      "contentType": "application/json; charset=utf8",
+      "dataType": "json",
+      "success": onSuccess,
+      "error": onError
+    })
+  }
+  
   function showSuccess() {
     display.empty().append(jQuery("<p>Workflow has been executed.</p>"));
   }
 
   function executeWorkflow() {
-    showLoading();
-
-    jQuery.ajax({
-      "dataType": "json",
-      "type": "POST",
-      "url": encodeURI("/miso/rest/workflow/execute/?" + jQuery.param({
-        id: workflowId
-      })),
-      "contentType": "application/json; charset=utf8",
-      "success": showSuccess,
-      "error": function() {
-        // todo
-      }
+    ajax("POST", encodeURI("/miso/rest/workflow/execute/?" + jQuery.param({
+      id: workflowId
+    })), showSuccess, function() {
+      // todo: error function
     });
   }
 
@@ -29,32 +32,23 @@ WorkflowDisplay = (function() {
   }
 
   function processInput(input) {
-    showLoading();
+    ajax("POST", encodeURI("/miso/rest/workflow/process/?" + jQuery.param({
+      id: workflowId,
+      stepNumber: stepNumber,
+      input: input
+    })), function(state) {
+      workflowId = state["workflowId"];
+      stepNumber = state["stepNumber"];
 
-    jQuery.ajax({
-      "dataType": "json",
-      "type": "POST",
-      "url": encodeURI("/miso/rest/workflow/process/?" + jQuery.param({
-        id: workflowId,
-        stepNumber: stepNumber,
-        input: input
-      })),
-      "contentType": "application/json; charset=utf8",
-      "success": function(state) {
-        workflowId = state["workflowId"];
-        stepNumber = state["stepNumber"];
-
-        if (isComplete(state)) {
-          showConfirmExecution(state["log"]);
-        } else {
-          showPrompt(state["message"], state["inputTypes"], state["log"]);
-        }
-      },
-      "error": function(xhr) {
-        // todo
-        console.log(JSON.parse(xhr["responseText"])["data"]["GENERAL"]);
+      if (isComplete(state)) {
+        showConfirmExecution(state["log"]);
+      } else {
+        showPrompt(state["message"], state["inputTypes"], state["log"]);
       }
-    })
+    }, function(xhr) {
+      // todo
+      console.log(JSON.parse(xhr["responseText"])["data"]["GENERAL"]);
+    });
   }
 
   function makeMessageTag(message) {
@@ -84,23 +78,16 @@ WorkflowDisplay = (function() {
   }
 
   function updateStep(newStepNumber) {
-    jQuery.ajax({
-      "dataType": "json",
-      "type": "GET",
-      "url": encodeURI("/miso/rest/workflow/getstep/?" + jQuery.param({
-        id: workflowId,
-        stepNumber: newStepNumber
-      })),
-      "contentType": "application/json; charset=utf8",
-      "success": function(state) {
-        stepNumber = state["stepNumber"];
-        workflowId = state["workflowId"];
-        showPrompt(state["message"], state["inputTypes"], state["log"]);
-      },
-      "error": function() {
-        // todo
-      }
-    })
+    ajax("GET", encodeURI("/miso/rest/workflow/getstep/?" + jQuery.param({
+      id: workflowId,
+      stepNumber: newStepNumber
+    })), function(state) {
+      stepNumber = state["stepNumber"];
+      workflowId = state["workflowId"];
+      showPrompt(state["message"], state["inputTypes"], state["log"]);
+    }, function() {
+      // todo
+    });
   }
 
   function makeLogEntry(text, entryStepNumber) {
