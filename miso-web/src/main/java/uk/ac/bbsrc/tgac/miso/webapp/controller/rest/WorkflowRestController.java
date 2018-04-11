@@ -26,20 +26,23 @@ public class WorkflowRestController extends RestController {
     Workflow workflow = workflowManager.loadWorkflow(id);
     workflowManager.processInput(workflow, stepNumber, input);
 
-    return toWorkflowStateDto(workflow, id, stepNumber);
+    return toDto(workflow, stepNumber + 1);
   }
 
-  private WorkflowStateDto toWorkflowStateDto(Workflow workflow, long id, int stepNumber) {
+  /**
+   * Represent workflow at the given stepNumber. If the workflow is complete and stepNumber does not point to a valid step, do not set the
+   * message, inputTypes, or stepNumber fields of the WorkflowStateDto
+   */
+  private WorkflowStateDto toDto(Workflow workflow, int stepNumber) {
     WorkflowStateDto workflowStateDto = new WorkflowStateDto();
-    workflowStateDto.setWorkflowId(id);
+    workflowStateDto.setWorkflowId(workflow.getProgress().getId());
     workflowStateDto.setLog(workflow.getLog());
+    workflowStateDto.setStepNumber(stepNumber);
 
-    if (!workflow.isComplete()) {
-      int nextStepNumber = stepNumber + 1;
-      WorkflowStepPrompt prompt = workflow.getStep(nextStepNumber);
+    if (!workflow.isComplete() || stepNumber < workflow.getLog().size()) {
+      WorkflowStepPrompt prompt = workflow.getStep(stepNumber);
       workflowStateDto.setMessage(prompt.getMessage());
       workflowStateDto.setInputTypes(prompt.getInputTypes());
-      workflowStateDto.setStepNumber(nextStepNumber);
     }
 
     return workflowStateDto;
@@ -54,6 +57,6 @@ public class WorkflowRestController extends RestController {
   public @ResponseBody WorkflowStateDto getStep(@RequestParam("id") long id, @RequestParam("stepNumber") int stepNumber)
       throws IOException {
     Workflow workflow = workflowManager.loadWorkflow(id);
-    return toWorkflowStateDto(workflow, id, stepNumber);
+    return toDto(workflow, stepNumber);
   }
 }
