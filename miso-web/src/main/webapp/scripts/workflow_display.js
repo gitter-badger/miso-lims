@@ -24,6 +24,10 @@ WorkflowDisplay = (function() {
     });
   }
 
+  function isComplete(state) {
+    return !state["message"] && !state["inputTypes"];
+  }
+
   function processInput(input) {
     showLoading();
 
@@ -37,10 +41,12 @@ WorkflowDisplay = (function() {
       })),
       "contentType": "application/json; charset=utf8",
       "success": function(state) {
-        if (!state["inputTypes"]) {
+        workflowId = state["workflowId"];
+        stepNumber = state["stepNumber"];
+
+        if (isComplete(state)) {
           showConfirmExecution(state["log"]);
         } else {
-          stepNumber = state["stepNumber"];
           showPrompt(state["message"], state["inputTypes"], state["log"]);
         }
       },
@@ -87,8 +93,9 @@ WorkflowDisplay = (function() {
       })),
       "contentType": "application/json; charset=utf8",
       "success": function(state) {
-        stepNumber = state["stepNumber"]
-        // todo
+        stepNumber = state["stepNumber"];
+        workflowId = state["workflowId"];
+        showPrompt(state["message"], state["inputTypes"], state["log"]);
       },
       "error": function() {
         // todo
@@ -97,11 +104,15 @@ WorkflowDisplay = (function() {
   }
 
   function makeLogEntry(text, entryStepNumber) {
-    var redoButton = jQuery("<td><img src='/styles/images/redo.svg' class='redoStep'").click(function() {
+    var row = jQuery("<tr>");
+    if (entryStepNumber === stepNumber) {
+      row.css("outline", "thin solid");
+    }
+    var redoButton = jQuery("<td><img src='/styles/images/redo.svg' class='redoStep'></td>").click(function() {
       updateStep(entryStepNumber);
     });
 
-    return jQuery("<tr>").append(jQuery("<td>" + text + "</td>")).append(redoButton);
+    return row.append(jQuery("<td>" + text + "</td>")).append(redoButton);
   }
 
   function makeLog(logEntries) {
