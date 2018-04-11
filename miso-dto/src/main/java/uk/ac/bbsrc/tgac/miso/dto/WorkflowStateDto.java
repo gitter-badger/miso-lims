@@ -10,6 +10,7 @@ import java.util.Set;
  */
 public class WorkflowStateDto {
   private long workflowId;
+  private int stepNumber;
   private String message;
   private Set<InputType> inputTypes;
   private List<String> log;
@@ -44,5 +45,13 @@ public class WorkflowStateDto {
 
   public void setWorkflowId(long workflowId) {
     this.workflowId = workflowId;
+  }
+
+  public int getStepNumber() {
+    return stepNumber;
+  }
+
+  public void setStepNumber(int stepNumber) {
+    this.stepNumber = stepNumber;
   }
 }

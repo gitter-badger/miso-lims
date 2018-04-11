@@ -18,11 +18,12 @@ WorkflowDisplay = (function() {
     });
   }
 
-  function processInput(input, workflowId, onSuccess, onError) {
+  function processInput(workflowId, stepNumber, input, onSuccess, onError) {
     var url = "/miso/rest/workflow/process";
     var queryUrl = encodeURI(url + "/?" + jQuery.param({
-      input: input,
-      id: workflowId
+      id: workflowId,
+      stepNumber: stepNumber,
+      input: input
     }));
 
     jQuery.ajax({
@@ -49,14 +50,14 @@ WorkflowDisplay = (function() {
     };
   }
 
-  function makeInputTag(workflowId) {
+  function makeInputTag(workflowId, stepNumber) {
     var inputTag = jQuery("<input type='text'>");
 
-    registerEnterHandler(inputTag, workflowId, makeOnLoad(), function(newState) {
+    registerEnterHandler(inputTag, workflowId, stepNumber, makeOnLoad(), function(newState) {
       if (!newState["inputTypes"]) {
         confirmExecution(newState["workflowId"], newState["log"]);
       } else {
-        promptUser(newState["workflowId"], newState["message"], newState["inputTypes"], newState["log"]);
+        promptUser(newState["workflowId"], newState["stepNumber"], newState["message"], newState["inputTypes"], newState["log"]);
       }
     }, function(errorText) {
       // todo
@@ -66,11 +67,11 @@ WorkflowDisplay = (function() {
     return inputTag;
   }
 
-  function registerEnterHandler(tag, workflowId, onLoad, onSuccess, onError) {
+  function registerEnterHandler(tag, workflowId, stepNumber, onLoad, onSuccess, onError) {
     tag.keypress(function(e) {
       if (e.which === 13) {
         onLoad();
-        processInput(tag.val(), workflowId, onSuccess, onError);
+        processInput(workflowId, stepNumber, tag.val(), onSuccess, onError);
       }
     })
   }
@@ -105,14 +106,14 @@ WorkflowDisplay = (function() {
         makeLog(log));
   }
 
-  function promptUser(workflowId, message, inputTypes, log) {
-    display.empty().append(makeMessageTag(message)).append(makeInputTag(workflowId)).append(makeLog(log)).children("input").focus();
+  function promptUser(workflowId, stepNumber, message, inputTypes, log) {
+    display.empty().append(makeMessageTag(message)).append(makeInputTag(workflowId, stepNumber)).append(makeLog(log)).children("input").focus();
   }
 
   return {
     init: function(divId, workflowId, message, inputTypes) {
       display = jQuery("#" + divId);
-      promptUser(workflowId, message, inputTypes, []);
+      promptUser(workflowId, 0, message, inputTypes, []);
     }
   }
 })();
