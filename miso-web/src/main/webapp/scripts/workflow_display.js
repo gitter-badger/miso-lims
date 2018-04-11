@@ -77,14 +77,13 @@ WorkflowDisplay = (function() {
     })
   }
 
-  function updateStep() {
+  function updateStep(newStepNumber) {
     jQuery.ajax({
       "dataType": "json",
       "type": "GET",
       "url": encodeURI("/miso/rest/workflow/getstep/?" + jQuery.param({
-        id: id,
-        // todo: send correct step number
-        // stepNumber: stepNumber
+        id: workflowId,
+        stepNumber: newStepNumber
       })),
       "contentType": "application/json; charset=utf8",
       "success": function(state) {
@@ -97,11 +96,9 @@ WorkflowDisplay = (function() {
     })
   }
 
-  function makeLogEntry(text) {
+  function makeLogEntry(text, entryStepNumber) {
     var redoButton = jQuery("<td><img src='/styles/images/redo.svg' class='redoStep'").click(function() {
-      updateStep(function(result) {
-        console.log(result);
-      });
+      updateStep(entryStepNumber);
     });
 
     return jQuery("<tr>").append(jQuery("<td>" + text + "</td>")).append(redoButton);
@@ -112,7 +109,7 @@ WorkflowDisplay = (function() {
 
     // Iterate backwards to display a reverse chronological log
     for (var i = logEntries.length - 1; i >= 0; i--) {
-      table.append(makeLogEntry(logEntries[i]));
+      table.append(makeLogEntry(logEntries[i], i));
     }
 
     return jQuery("<div>").append(table);
