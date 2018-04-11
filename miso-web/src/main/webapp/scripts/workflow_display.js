@@ -1,4 +1,6 @@
 WorkflowDisplay = (function() {
+  var display;
+
   function executeWorkflow(workflowId, onLoad, onSuccess) {
     onLoad();
 
@@ -41,22 +43,22 @@ WorkflowDisplay = (function() {
     return jQuery("<p>" + message + "</p>");
   }
 
-  function makeOnLoad(display) {
+  function makeOnLoad() {
     return function() {
       display.empty().append(jQuery("<img src='/styles/images/ajax-loader.gif'>"));
     };
   }
 
-  function makeInputTag(display, workflowId) {
+  function makeInputTag(workflowId) {
     var inputTag = jQuery("<input/>").attr({
       type: "text"
     });
 
-    registerEnterHandler(inputTag, workflowId, makeOnLoad(display), function(newState) {
+    registerEnterHandler(inputTag, workflowId, makeOnLoad(), function(newState) {
       if (!newState["inputTypes"]) {
-        updateDisplay(display, newState["workflowId"], newState["log"], "Do you want to execute this workflow?");
+        updateDisplay(newState["workflowId"], newState["log"], "Do you want to execute this workflow?");
       } else {
-        updateDisplay(display, newState["workflowId"], newState["log"], newState["message"], newState["inputTypes"]);
+        updateDisplay(newState["workflowId"], newState["log"], newState["message"], newState["inputTypes"]);
       }
     }, function(errorText) {
       // todo
@@ -92,27 +94,28 @@ WorkflowDisplay = (function() {
     return jQuery("<div>").append(table);
   }
 
-  function makeExecuteButton(display, workflowId) {
+  function makeExecuteButton(workflowId) {
     return jQuery("<a class='ui-button ui-state-default'>").text("Execute").click(function() {
-      executeWorkflow(workflowId, makeOnLoad(display), function() {
+      executeWorkflow(workflowId, makeOnLoad(), function() {
         display.empty().append(jQuery("<p>Workflow has been executed.</p>"));
       });
     })
   }
 
-  function updateDisplay(display, workflowId, log, message, inputTypes) {
+  function updateDisplay(workflowId, log, message, inputTypes) {
     display.empty().append(makeMessageTag(message));
     if (!inputTypes) {
-      display.append(makeExecuteButton(display, workflowId));
+      display.append(makeExecuteButton(workflowId));
     } else {
-      display.append(makeInputTag(display, workflowId));
+      display.append(makeInputTag(workflowId));
     }
     display.append(makeLog(log)).children("input").focus();
   }
 
   return {
     init: function(divId, workflowId, message, inputTypes) {
-      updateDisplay(jQuery("#" + divId), workflowId, [], message, inputTypes);
+      display = jQuery("#" + divId);
+      updateDisplay(workflowId, [], message, inputTypes);
     }
   }
 })();
