@@ -50,8 +50,8 @@ public class WorkflowRestController extends RestController {
     workflowManager.execute(workflowManager.loadWorkflow(id));
   }
 
-  @RequestMapping(value = "/setstep", method = RequestMethod.GET)
-  public @ResponseBody WorkflowStateDto setStep(@RequestParam("id") long id, @RequestParam("stepNumber") int stepNumber)
+  @RequestMapping(value = "/getstep", method = RequestMethod.GET)
+  public @ResponseBody WorkflowStateDto getStep(@RequestParam("id") long id, @RequestParam("stepNumber") int stepNumber)
       throws IOException {
     Workflow workflow = workflowManager.loadWorkflow(id);
     return toWorkflowStateDto(workflow, id, stepNumber);

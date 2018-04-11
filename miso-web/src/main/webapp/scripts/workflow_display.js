@@ -81,7 +81,7 @@ WorkflowDisplay = (function() {
     jQuery.ajax({
       "dataType": "json",
       "type": "GET",
-      "url": encodeURI("/miso/rest/workflow/setstep/?" + jQuery.param({
+      "url": encodeURI("/miso/rest/workflow/getstep/?" + jQuery.param({
         id: id,
         // todo: send correct step number
         // stepNumber: stepNumber
