@@ -3,6 +3,7 @@ WorkflowDisplay = (function() {
   var workflowId;
   var stepNumber;
   var loadingGif = jQuery("<img src='/styles/images/ajax-loader.gif'>");
+  var errorDiv = jQuery("<div id='inputError'></div>");
 
   function ajax(method, url, onSuccess, onError) {
     showLoading();
@@ -31,7 +32,7 @@ WorkflowDisplay = (function() {
   function showError(errorText) {
     loadingGif.remove();
     display.children().show();
-    display.children("input").after(jQuery("<p>" + errorText + "</p>"));
+    errorDiv.text(errorText);
   }
 
   function processInput(input) {
@@ -128,7 +129,7 @@ WorkflowDisplay = (function() {
   }
 
   function showPrompt(message, inputTypes, log) {
-    display.empty().append(makeMessageTag(message)).append(makeInputTag()).append(makeLog(log)).children("input").focus();
+    display.empty().append(makeMessageTag(message)).append(makeInputTag()).append(errorDiv).append(makeLog(log)).children("input").focus();
   }
 
   function initDisplay(newDisplay, newWorkflowId, newStepNumber) {
